@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conteúdos | Aluno</title>
+    
+    <link rel="icon" href="../images/logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
+
+    <style>
+        /* --- Reset e Configurações de Design Moderno --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: #f3f7fa; 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 40px 24px;
+            overflow-y: auto;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 1050px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HEADER --- */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .breadcrumb a {
+            color: #0056f5;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -0.8px;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            font-size: 15px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* --- CONVERSÃO DA GRADE EM ARQUITETURA DE ABAS / TIMELINE COMPLEXA --- */
+        .workspace-layout {
+            display: grid;
+            grid-template-columns: 310px 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+
+        /* Painel Lateral de Seleção Contínua */
+        .sidebar-panel {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.01);
+        }
+
+        .sidebar-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+            padding-left: 4px;
+        }
+
+        /* Abas Estilizadas Inteligentes */
+        .subject-tab-btn {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid transparent;
+            background-color: #f8fafc;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: left;
+        }
+
+        .subject-tab-btn .tab-content-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .subject-tab-btn i.subject-main-icon {
+            font-size: 20px;
+            color: #64748b;
+            transition: color 0.25s;
+        }
+
+        .subject-tab-btn .tab-text-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .subject-tab-btn .tab-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #334155;
+            transition: color 0.25s;
+        }
+
+        .subject-tab-btn .tab-subtitle {
+            font-size: 11px;
+            font-weight: 500;
+            color: #94a3b8;
+        }
+
+        /* Indicador numérico dinâmico (KPI Badge) */
+        .subject-tab-btn .tab-counter-badge {
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            min-width: 28px;
+            height: 24px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 6px;
+            transition: all 0.25s;
+        }
+
+        /* Estados de Ativação Personalizados por Matéria */
+        .subject-tab-btn[data-materia="port"].active {
+            background-color: #eff6ff; border-color: #bfdbfe;
+        }
+        .subject-tab-btn[data-materia="port"].active i.subject-main-icon,
+        .subject-tab-btn[data-materia="port"].active .tab-title { color: #0056f5; }
+        .subject-tab-btn[data-materia="port"].active .tab-counter-badge { background-color: #0056f5; color: #ffffff; border-color: #0056f5; }
+
+        .subject-tab-btn[data-materia="mat"].active {
+            background-color: #f5f5fe; border-color: #c3bff0;
+        }
+        .subject-tab-btn[data-materia="mat"].active i.subject-main-icon,
+        .subject-tab-btn[data-materia="mat"].active .tab-title { color: #4338ca; }
+        .subject-tab-btn[data-materia="mat"].active .tab-counter-badge { background-color: #4338ca; color: #ffffff; border-color: #4338ca; }
+
+        .subject-tab-btn[data-materia="cien"].active {
+            background-color: #f0fdf4; border-color: #bbf7d0;
+        }
+        .subject-tab-btn[data-materia="cien"].active i.subject-main-icon,
+        .subject-tab-btn[data-materia="cien"].active .tab-title { color: #15803d; }
+        .subject-tab-btn[data-materia="cien"].active .tab-counter-badge { background-color: #16a34a; color: #ffffff; border-color: #16a34a; }
+
+        .subject-tab-btn[data-materia="artes"].active {
+            background-color: #faf5ff; border-color: #e9d5ff;
+        }
+        .subject-tab-btn[data-materia="artes"].active i.subject-main-icon,
+        .subject-tab-btn[data-materia="artes"].active .tab-title { color: #6b21a8; }
+        .subject-tab-btn[data-materia="artes"].active .tab-counter-badge { background-color: #8b5cf6; color: #ffffff; border-color: #8b5cf6; }
+
+        .subject-tab-btn:hover:not(.active) {
+            background-color: #f1f5f9;
+            transform: translateX(4px);
+        }
+
+        /* --- DISPLAY DE JORNADA CRONOLÓGICA (TIMELINE) --- */
+        .timeline-viewer-panel {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.01);
+            min-height: 400px;
+        }
+
+        .timeline-header-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 20px;
+            margin-bottom: 28px;
+        }
+
+        .timeline-header-meta h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .timeline-structure {
+            position: relative;
+            padding-left: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Linha Central Conectora */
+        .timeline-structure::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            bottom: 8px;
+            left: 7px;
+            width: 2px;
+            background-color: #e2e8f0;
+        }
+
+        /* Nó de Atividade da Timeline */
+        .timeline-node {
+            position: relative;
+            animation: nodeSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes nodeSlideIn {
+            from { opacity: 0; transform: translateX(12px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Ponto de marcação visual (Bullet) */
+        .timeline-bullet {
+            position: absolute;
+            left: -32px;
+            top: 14px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            border: 3px solid #cbd5e1;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        /* Cores dos Bullets Dinâmicos baseados no tema ativo */
+        .theme-port .timeline-bullet { border-color: #0056f5; box-shadow: 0 0 0 4px rgba(0, 86, 245, 0.12); }
+        .theme-mat .timeline-bullet { border-color: #4338ca; box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.12); }
+        .theme-cien .timeline-bullet { border-color: #10bf8d; box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.12); }
+        .theme-artes .timeline-bullet { border-color: #7c3aed; box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.12); }
+
+        /* Card interno do conteúdo */
+        .timeline-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .timeline-card:hover {
+            background-color: #ffffff;
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+
+        .node-details {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .node-topics {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.4;
+        }
+
+        .node-status-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-badge-completed {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .theme-port .status-badge-completed { color: #0056f5; }
+        .theme-mat .status-badge-completed { color: #4338ca; }
+        .theme-cien .status-badge-completed { color: #10bf8d; }
+        .theme-artes .status-badge-completed { color: #7c3aed; }
+
+        .node-date-tag {
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 6px 12px;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+
+        /* --- ESTADO VAZIO (EMPTY STATE) --- */
+        .timeline-empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            text-align: center;
+            color: #64748b;
+            gap: 12px;
+        }
+
+        .timeline-empty-state i {
+            font-size: 44px;
+            color: #cbd5e1;
+            background-color: #f8fafc;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .timeline-empty-state h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .timeline-empty-state p {
+            font-size: 14px;
+            max-width: 320px;
+            line-height: 1.5;
+        }
+
+        /* --- RESPONSIVIDADE --- */
+        @media (max-width: 880px) {
+            .workspace-layout {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            body {
+                padding: 24px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+    <header class="page-header">
+        <div class="breadcrumb">
+            <a href="inicio.html">Página Inicial</a> 
+            <i class="hgi hgi-stroke hgi-rounded hgi-arrow-right-01" style="font-size: 12px; color: #94a3b8;"></i> 
+            <span>Conteúdos</span>
+        </div>
+        <h1>Diário de Conteúdos</h1>
+        <p>Monitore cronologicamente todas as matérias e tópicos já finalizados pelos professores</p>
+    </header>
+
+    <div class="workspace-layout">
+        
+        <aside class="sidebar-panel">
+            <span class="sidebar-title">Disciplinas</span>
+            
+            <button class="subject-tab-btn active" data-materia="port">
+                <div class="tab-content-left">
+                    <i class="hgi hgi-stroke hgi-rounded hgi-book-02 subject-main-icon"></i>
+                    <div class="tab-text-info">
+                        <span class="tab-title">Língua Portuguesa</span>
+                        <span class="tab-subtitle">Tópicos concluídos</span>
+                    </div>
+                </div>
+                <span class="tab-counter-badge" id="badge-port">0</span>
+            </button>
+
+            <button class="subject-tab-btn" data-materia="mat">
+                <div class="tab-content-left">
+                    <i class="hgi hgi-stroke hgi-rounded hgi-calculator subject-main-icon"></i>
+                    <div class="tab-text-info">
+                        <span class="tab-title">Matemática</span>
+                        <span class="tab-subtitle">Tópicos concluídos</span>
+                    </div>
+                </div>
+                <span class="tab-counter-badge" id="badge-mat">0</span>
+            </button>
+
+            <button class="subject-tab-btn" data-materia="cien">
+                <div class="tab-content-left">
+                    <i class="hgi hgi-stroke hgi-rounded hgi-test-tube-01 subject-main-icon"></i>
+                    <div class="tab-text-info">
+                        <span class="tab-title">Ciências</span>
+                        <span class="tab-subtitle">Tópicos concluídos</span>
+                    </div>
+                </div>
+                <span class="tab-counter-badge" id="badge-cien">0</span>
+            </button>
+
+            <button class="subject-tab-btn" data-materia="artes">
+                <div class="tab-content-left">
+                    <i class="hgi hgi-stroke hgi-rounded hgi-paint-board subject-main-icon"></i>
+                    <div class="tab-text-info">
+                        <span class="tab-title">Artes</span>
+                        <span class="tab-subtitle">Tópicos concluídos</span>
+                    </div>
+                </div>
+                <span class="tab-counter-badge" id="badge-artes">0</span>
+            </button>
+        </aside>
+
+        <main class="timeline-viewer-panel theme-port" id="panel-timeline-wrapper">
+            <div class="timeline-header-meta">
+                <h2 id="timeline-subject-title">Língua Portuguesa</h2>
+            </div>
+
+            <div class="timeline-structure" id="timeline-dynamic-container">
+                </div>
+        </main>
+
+    </div>
+
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAs3OTqOeVVzcxlrcM8Th5ObkhtXca69Ac",
+        authDomain: "mindspace-educacao.firebaseapp.com",
+        projectId: "mindspace-educacao",
+        databaseURL: "https://mindspace-educacao-default-rtdb.firebaseio.com/"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Mapeamento preciso sincronizado com os nós reais de gravação do professor
+    const monitoramentoConfig = {
+        'port':  { path: 'port/trabalhados', label: 'Língua Portuguesa', badgeId: 'badge-port' },
+        'mat':   { path: 'mat/trabalhados',  label: 'Matemática',       badgeId: 'badge-mat' },
+        'cien':  { path: 'cien/trabalhados', label: 'Ciências',         badgeId: 'badge-cien' },
+        'artes': { path: 'artes/trabalhados', label: 'Artes',            badgeId: 'badge-artes' }
+    };
+
+    let cacheBancoDeDados = {};
+    let materiaAtiva = 'port';
+
+    // Função de renderização avançada da Linha do Tempo Estilizada
+    function renderJornadaMateria(materiaKey) {
+        const container = document.getElementById('timeline-dynamic-container');
+        const titleEl = document.getElementById('timeline-subject-title');
+        const wrapperPanel = document.getElementById('panel-timeline-wrapper');
+        
+        if (!container || !titleEl || !wrapperPanel) return;
+
+        // Atualiza as classes de cores de tema dinamicamente
+        wrapperPanel.className = `timeline-viewer-panel theme-${materiaKey}`;
+        titleEl.innerText = monitoramentoConfig[materiaKey].label;
+
+        const dadosMateria = cacheBancoDeDados[materiaKey];
+
+        if (!dadosMateria || Object.keys(dadosMateria).length === 0) {
+            container.innerHTML = `
+                <div class="timeline-empty-state">
+                    <i class="hgi hgi-stroke hgi-rounded hgi-folder-empty"></i>
+                    <h3>Nenhum registro encontrado</h3>
+                    <p>O professor ainda não publicou tópicos ou conteúdos finalizados para esta matéria recentemente.</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Converte o objeto Firebase em Array e inverte para exibir os conteúdos mais novos no topo
+        const listaCronologica = Object.entries(dadosMateria).reverse();
+        container.innerHTML = '';
+
+        listaCronologica.forEach(([id, registro], index) => {
+            const node = document.createElement('div');
+            node.className = 'timeline-node';
+            // Adiciona um pequeno atraso de animação em cascata para ficar elegante
+            node.style.animationDelay = `${index * 0.05}s`;
+
+            // Junta os tópicos vindos da array 'itens' guardada pelo professor
+            const textoConteudo = (registro.itens && Array.isArray(registro.itens)) 
+                ? registro.itens.join(', ') 
+                : 'Tópico de aula ministrado';
+
+            node.innerHTML = `
+                <div class="timeline-bullet"></div>
+                <div class="timeline-card">
+                    <div class="node-details">
+                        <span class="node-topics">${textoConteudo}</span>
+                        <div class="node-status-row">
+                            <span class="status-badge-completed">
+                                <i class="hgi hgi-stroke hgi-rounded hgi-tick-circle" style="font-size:14px; font-weight:800;"></i> Concluído
+                            </span>
+                        </div>
+                    </div>
+                    <span class="node-date-tag">${registro.data || '—'}</span>
+                </div>
+            `;
+            container.appendChild(node);
+        });
+    }
+
+    // Configuração dos Listeners em tempo real do Firebase por Matéria
+    Object.entries(monitoramentoConfig).forEach(([key, config]) => {
+        const refMateria = ref(db, config.path);
+        onValue(refMateria, (snapshot) => {
+            const val = snapshot.val() || null;
+            cacheBancoDeDados[key] = val;
+
+            // Calcula o total de conteúdos dinamicamente
+            const totalItens = val ? Object.keys(val).length : 0;
+            const badge = document.getElementById(config.badgeId);
+            if (badge) badge.innerText = totalItens;
+
+            // Se for a matéria atualmente aberta na tela, atualiza imediatamente
+            if (materiaAtiva === key) {
+                renderJornadaMateria(key);
+            }
+        });
+    });
+
+    // Lógica de alternância e clique entre as abas laterais
+    const botoesAbas = document.querySelectorAll('.subject-tab-btn');
+    botoesAbas.forEach(btn => {
+        btn.addEventListener('click', function() {
+            botoesAbas.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            materiaAtiva = this.getAttribute('data-materia');
+            renderJornadaMateria(materiaAtiva);
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda | Aluno</title>
+    
+    <link rel="icon" href="../images/logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
+
+    <style>
+        /* --- Reset e Configurações Globais --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: #f3f7fa; 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 40px 24px;
+            overflow-y: auto;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 850px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HEADER --- */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .breadcrumb a {
+            color: #0056f5;
+            text-decoration: none;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: -0.6px;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* --- CONTAINER PRINCIPAL DA AGENDA --- */
+        .agenda-container {
+            background-color: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+        }
+
+        /* Controle de Navegação do Mês */
+        .month-navigator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .month-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            text-transform: capitalize;
+            letter-spacing: -0.3px;
+        }
+
+        .btn-nav {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            cursor: pointer;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-nav:hover {
+            border-color: #bfdbfe;
+            color: #0056f5;
+            background-color: #f0f7ff;
+        }
+
+        .btn-nav:active {
+            transform: scale(0.95);
+        }
+
+        /* Régua de Dias (Week Strip Horizonal) */
+        .week-strip {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+
+        .day-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 12px 6px;
+            border-radius: 12px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            user-select: none;
+            border: 1px solid transparent;
+        }
+
+        .day-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            z-index: 2;
+        }
+
+        .day-number {
+            font-size: 15px;
+            font-weight: 700;
+            color: #334155;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            z-index: 2;
+        }
+
+        /* --- DESTAQUE: DIA DE HOJE (Fica sempre assim, a menos que seja o selecionado) --- */
+        .day-item.is-today:not(.day-active) {
+            background-color: #f0f5ff;
+            border-color: #dbeafe;
+        }
+        
+        .day-item.is-today:not(.day-active) .day-number {
+            color: #0056f5;
+        }
+
+        .day-item.is-today:not(.day-active) .day-name {
+            color: #1d4ed8;
+            font-weight: 600;
+        }
+
+        /* Hover discreto nos dias */
+        .day-item:hover:not(.day-active) .day-number {
+            background-color: #f1f5f9;
+            color: #1e293b;
+        }
+        
+        /* Ajuste do hover específico para o dia de hoje */
+        .day-item.is-today:hover:not(.day-active) .day-number {
+            background-color: #e0ebff;
+            color: #0056f5;
+        }
+
+        /* --- ESTADO: DIA ATIVO / SELECIONADO --- */
+        .day-item.day-active {
+            transform: translateY(-1px);
+        }
+
+        .day-item.day-active .day-name {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .day-item.day-active .day-number {
+            color: #0056f5;
+            font-weight: 800;
+        }
+
+        /* Barra indicadora azul embaixo do dia ativo */
+        .day-item.day-active::after {
+            content: '';
+            position: absolute;
+            bottom: -13px;
+            left: 10%;
+            width: 80%;
+            height: 3px;
+            background-color: #0056f5;
+            border-radius: 2px 2px 0 0;
+            z-index: 3;
+        }
+
+        /* Indicador sutil de tarefas (pontinho) */
+        .dot-indicator {
+            width: 5px;
+            height: 5px;
+            background-color: #bfdbfe;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 4px;
+            z-index: 2;
+        }
+        
+        .day-item.day-active .dot-indicator,
+        .day-item.is-today .dot-indicator {
+            background-color: #0056f5;
+        }
+
+        /* --- CONTEÚDO DO DIA --- */
+        .events-layout {
+            margin-top: 12px;
+            min-height: 240px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px 24px;
+            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: border-color 0.2s ease;
+        }
+
+        .event-box:hover {
+            border-color: #cbd5e1;
+        }
+
+        .event-box-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            color: #0056f5;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .event-box-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .no-events-wrapper {
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 16px;
+            padding: 40px 0;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .no-events-icon-box {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            background-color: #eff6ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a5b4fc;
+        }
+
+        .no-events-icon-box i {
+            font-size: 56px;
+            color: #0056f5;
+            opacity: 0.65;
+        }
+
+        .no-events-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+    <header class="page-header">
+        <div class="breadcrumb">
+            <a href="inicio.html">Página Inicial</a> 
+            <i class="hgi hgi-stroke hgi-rounded hgi-arrow-right-01" style="font-size: 12px; color: #94a3b8;"></i> 
+            <span>Agenda Escolar</span>
+        </div>
+        <h1>Agenda de Aulas</h1>
+        <p>Veja o planejamento de aulas e atividades</p>
+    </header>
+
+    <div class="agenda-container">
+        
+        <div class="month-navigator">
+            <button class="btn-nav" onclick="changeWeek(-7)">
+                <i class="hgi hgi-stroke hgi-rounded hgi-arrow-left-01"></i>
+            </button>
+            <div class="month-title" id="month-year-display">Carregando...</div>
+            <button class="btn-nav" onclick="changeWeek(7)">
+                <i class="hgi hgi-stroke hgi-rounded hgi-arrow-right-01"></i>
+            </button>
+        </div>
+
+        <div class="week-strip" id="dynamic-week-strip"></div>
+
+        <div class="events-layout" id="day-events-panel"></div>
+
+    </div>
+
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAs3OTqOeVVzcxlrcM8Th5ObkhtXca69Ac",
+        authDomain: "mindspace-educacao.firebaseapp.com",
+        projectId: "mindspace-educacao",
+        storageBucket: "mindspace-educacao.firebasestorage.app",
+        messagingSenderId: "569394609531",
+        appId: "1:569394609531:web:9ab5ba6bc2181bc5a911de",
+        databaseURL: "https://mindspace-educacao-default-rtdb.firebaseio.com/"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const tasksRef = ref(db, 'daniel_lucca/artes/agenda');
+
+    let baseDate = new Date();
+    let selectedDateStr = "";
+    let allTasks = {};
+
+    const weekDaysNames = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+
+    function formatDateString(d) {
+        return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+    }
+
+    function initActiveDate() {
+        if (!selectedDateStr) {
+            selectedDateStr = formatDateString(new Date());
+        }
+    }
+
+    function renderAgendaStructure() {
+        const weekStrip = document.getElementById('dynamic-week-strip');
+        const monthYearDisplay = document.getElementById('month-year-display');
+        if (!weekStrip) return;
+
+        weekStrip.innerHTML = '';
+
+        monthYearDisplay.innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(baseDate);
+
+        const currentDayOfWeek = baseDate.getDay();
+        const sundayDate = new Date(baseDate);
+        sundayDate.setDate(baseDate.getDate() - currentDayOfWeek);
+
+        const todayReal = new Date();
+        const todayRealStr = formatDateString(todayReal);
+
+        for (let i = 0; i < 7; i++) {
+            const dayIteration = new Date(sundayDate);
+            dayIteration.setDate(sundayDate.getDate() + i);
+
+            const dateStr = formatDateString(dayIteration);
+            const hasTask = allTasks[dateStr] && allTasks[dateStr].trim() !== '';
+            const isToday = dateStr === todayRealStr;
+
+            const dayItem = document.createElement('div');
+            // Injeta dinamicamente a classe "is-today" se o dia renderizado for o dia atual do sistema
+            dayItem.className = `day-item ${dateStr === selectedDateStr ? 'day-active' : ''} ${isToday ? 'is-today' : ''}`;
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'day-name';
+            nameSpan.innerText = weekDaysNames[i].split('-')[0];
+
+            const numSpan = document.createElement('span');
+            numSpan.className = 'day-number';
+            numSpan.innerText = dayIteration.getDate();
+
+            dayItem.appendChild(nameSpan);
+            dayItem.appendChild(numSpan);
+
+            if (hasTask) {
+                const dot = document.createElement('div');
+                dot.className = 'dot-indicator';
+                dayItem.appendChild(dot);
+            }
+
+            dayItem.onclick = () => {
+                selectedDateStr = dateStr;
+                renderAgendaStructure();
+                renderSelectedDayEvents();
+            };
+
+            weekStrip.appendChild(dayItem);
+        }
+
+        renderSelectedDayEvents();
+    }
+
+    function renderSelectedDayEvents() {
+        const panel = document.getElementById('day-events-panel');
+        if (!panel) return;
+
+        panel.innerHTML = '';
+        const taskContent = allTasks[selectedDateStr];
+
+        if (taskContent && taskContent.trim() !== '') {
+            const box = document.createElement('div');
+            box.className = 'event-box';
+            box.innerHTML = `
+                <div class="event-box-header">
+                    <i class="hgi hgi-stroke hgi-rounded hgi-book-open-02"></i> Planejamento Pedagógico
+                </div>
+                <div class="event-box-title">${taskContent}</div>
+            `;
+            panel.appendChild(box);
+        } else {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'no-events-wrapper';
+            emptyState.innerHTML = `
+                <div class="no-events-icon-box">
+                    <i class="hgi hgi-stroke hgi-rounded hgi-news"></i>
+                </div>
+                <div class="no-events-text">Não há planejamentos ou atividades para esta data</div>
+            `;
+            panel.appendChild(emptyState);
+        }
+    }
+
+    window.changeWeek = (daysOffset) => {
+        baseDate.setDate(baseDate.getDate() + daysOffset);
+        renderAgendaStructure();
+    };
+
+    onValue(tasksRef, (snapshot) => {
+        allTasks = snapshot.val() || {};
+        initActiveDate();
+        renderAgendaStructure();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Início | Aluno</title>
+    
+
+    <link rel="icon" href="../images/logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <style>
+        /* --- Reset e Configurações Globais --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: #f3f7fa; 
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- Container da Sidebar --- */
+        .sidebar {
+            width: 260px;
+            background-color: #ffffff;
+            height: 100vh;
+            padding: 32px 16px 24px 24px; 
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        /* --- Estilização da Logo --- */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 32px;
+            padding-left: 8px;
+            height: 28px;
+        }
+
+        /* --- Lista de Navegação --- */
+        .menu-nav {
+            flex-grow: 1;
+        }
+
+        .menu-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #64748b; 
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600; 
+            letter-spacing: -0.2px;
+            border-radius: 12px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .menu-item a .hgi-stroke {
+            font-size: 20px;
+            color: #64748b;
+            transition: transform 0.25s ease;
+        }
+
+        /* Efeito de Clique Ativo (Feedback Tátil) */
+        .menu-item a:active {
+            transform: scale(0.97);
+        }
+
+        .menu-item.active a {
+            background-color: #e6f0ff; 
+            color: #0056f5; 
+        }
+
+        .menu-item.active a .hgi-stroke {
+            color: #0056f5;
+        }
+
+        .menu-item a:hover:not(.active a) {
+            background-color: #f8fafc;
+            color: #1e293b;
+            padding-left: 20px; /* Leve deslize para a direita */
+        }
+        
+        .menu-item a:hover:not(.active a) .hgi-stroke {
+            color: #1e293b;
+            transform: scale(1.1);
+        }
+
+        .badge {
+            background-color: #0056f5;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: auto;
+            animation: pulseBadge 2s infinite;
+        }
+
+        @keyframes pulseBadge {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.06); box-shadow: 0 0 0 4px rgba(0, 86, 245, 0.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* --- CONTAINER DO CONTEÚDO PRINCIPAL --- */
+        .main-content {
+            flex: 1;
+            padding: 32px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            overflow-y: auto;
+            height: 100vh;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Container que deita os dois cards superiores lado a lado */
+        .profile-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            width: 100%;
+        }
+
+        /* Base dos Cards Principais */
+        .main-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .main-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Banner interno superior do card */
+        .blue-banner {
+            height: 70px;
+            background: linear-gradient(135deg, #002b80 0%, #0046cc 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0.08;
+            background-image: radial-gradient(circle at 80% 10%, transparent 100px, #ffffff 100px, #ffffff 102px, transparent 102px),
+                              radial-gradient(circle at 80% 10%, transparent 140px, #ffffff 140px, #ffffff 142px, transparent 142px);
+        }
+
+        /* Corpo do perfil */
+        .profile-body {
+            padding: 0 24px 16px 24px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            margin-top: -32px; 
+            margin-bottom: 0;            
+        }
+
+        .avatar-container {
+            width: 64px;
+            height: 64px;
+            background-color: #bfdbfe;
+            border: 4px solid #ffffff; 
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .main-card:hover .avatar-container {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .avatar-letter {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0056f5;
+        }
+
+        .student-info .student-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: -0.3px;
+            margin-bottom: 4px;
+        }
+
+        .badge-role {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #475569;
+            background-color: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .school-text {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        /* Seção de progresso */
+        .progress-section {
+            border-top: 1px solid #f1f5f9;
+            padding: 16px 24px 24px 24px;
+            margin-top: auto;               
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .progress-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .progress-container-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bar-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 6px;
+            background-color: #e2e8f0;
+            border-radius: 3px;
+            margin: 0 16px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background-color: #0056f5;
+            border-radius: 3px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* Animação de carregamento suave */
+        }
+
+        .bar-percentage {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        /* --- CARD DE MÉDIAS POR MATÉRIA --- */
+        .main-card.grades-card {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .grades-header .hgi-stroke {
+            font-size: 20px;
+            color: #64748b;
+            transition: transform 0.3s ease;
+        }
+
+        .main-card.grades-card:hover .grades-header .hgi-stroke {
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        .grades-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .grades-header h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .subjects-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex: 1;
+            justify-content: space-between; 
+        }
+
+        .subject-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: transform 0.2s ease;
+        }
+
+        .subject-item:hover {
+            transform: translateX(4px); /* Desloca levemente para a direita no hover */
+        }
+
+        .subject-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .subject-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .subject-score {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .subject-bar-track {
+            width: 100%;
+            height: 8px;
+            background-color: #f1f5f9;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .subject-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fill-portugues { background-color: #0056f5; } 
+        .fill-matematica { background-color: #4338ca; } 
+        .fill-ciencias   { background-color: #10bf8d; } 
+        .fill-artes      { background-color: #7c3aed; } 
+
+        /* --- SEÇÃO DA AGENDA SEMANAL --- */
+        .agenda-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .agenda-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.05);
+        }
+
+        .agenda-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .agenda-title-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1e293b;
+        }
+
+        .agenda-title-box h3 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .agenda-title-box .hgi-stroke {
+            font-size: 20px;
+            color: #64748b;
+        }
+
+        .agenda-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .agenda-month-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        /* Botão Ver Calendário Completo */
+        .btn-full-calendar {
+            background-color: transparent;
+            border: 1px solid #e2e8f0;
+            color: #0056f5;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-full-calendar:hover {
+            background-color: #f0f7ff;
+            border-color: #bfdbfe;
+            transform: translateY(-1px);
+        }
+
+        .btn-full-calendar:active {
+            transform: scale(0.96);
+        }
+
+        /* Linha dos dias da semana */
+        .week-strip {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 12px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .day-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px 4px;
+            border-radius: 12px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            user-select: none;
+        }
+
+        .day-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            transition: color 0.2s ease;
+        }
+
+        .day-number {
+            font-size: 14px;
+            font-weight: 700;
+            color: #334155;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .day-item:hover:not(.day-active) .day-number {
+            background-color: #f1f5f9;
+            transform: scale(1.05);
+        }
+
+        /* Animação suave ao clicar no dia */
+        .day-item:active {
+            transform: scale(0.92);
+        }
+
+        .day-item.day-active {
+            transform: scale(1.02);
+        }
+
+        .day-item.day-active .day-name {
+            color: #0056f5;
+        }
+
+        .day-item.day-active .day-number {
+            background-color: #0056f5;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 86, 245, 0.25);
+        }
+
+        /* Indicador de evento (Pontinho) */
+        .dot-indicator {
+            width: 5px;
+            height: 5px;
+            background-color: #0056f5;
+            border-radius: 50%;
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Lista de compromissos */
+        .events-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .events-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 4px;
+        }
+
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Card individual do evento */
+        .event-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 18px;
+            animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .event-item:hover {
+            transform: translateX(2px);
+            border-color: #cbd5e1;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .event-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .event-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .event-info {
+            font-size: 12px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .event-info i {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .no-events-box {
+            padding: 20px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            background-color: #f8fafc;
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand">
+            <img src="../images/logo.svg" alt="">
+        </div>
+
+        <nav class="menu-nav">
+            <ul class="menu-list">
+                <li class="menu-item active">
+                    <a href="">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-home-03"></i>
+                        <span>Início</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="conteudos">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-teaching"></i>
+                        <span>Conteúdos</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="desempenho">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-analytics-01"></i>
+                        <span>Desempenho</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-book-open-02"></i>
+                        <span>Livro Digital</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="agenda">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-calendar-03"></i>
+                        <span>Agenda</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="https://mindspaceeducacao.github.io/MindCards">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-cards-01"></i>
+                        <span>MindCards</span>
+                        <span class="badge">NOVO</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+    
+    <main class="main-content">
+        
+        <div class="profile-row">
+            <div class="main-card">
+                <div class="blue-banner">
+                    <div class="banner-lines"></div>
+                </div>
+                
+                <div class="profile-body">
+                    <div class="avatar-container">
+                        <div class="avatar-letter">E</div>
+                    </div>
+                    
+                    <div class="student-info">
+                        <h2 class="student-name">Ester de Azevedo Burbon</h2>
+                        <span class="badge-role">Estudante</span>
+                        <p class="school-text">1º Ano</p>
+                        <p class="school-text">MindSpace Educação - 2026</p>
+                    </div>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <span class="progress-title">Seu progresso</span>
+                    </div>
+                    
+                    <div class="progress-container-box">
+                        <span class="bar-label">Média Final</span>
+                        <div class="bar-track">
+                            <div class="bar-fill" id="geral-bar-fill" style="width: 0%;"></div>
+                        </div>
+                        <span class="bar-percentage" id="geral-bar-percent">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-card grades-card">
+                <div class="grades-header">
+                    <h3>Nota por matéria</h3>
+                    <i class="hgi hgi-stroke hgi-rounded hgi-backpack-01"></i>
+                </div>
+                
+                <div class="subjects-list">
+                    <div class="subject-item">
+                        <div class="subject-info">
+                            <span class="subject-name">Língua Portuguesa</span>
+                            <span class="subject-score" id="desk-port">—</span>
+                        </div>
+                        <div class="subject-bar-track">
+                            <div class="subject-bar-fill fill-portugues" id="bar-port" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="subject-item">
+                        <div class="subject-info">
+                            <span class="subject-name">Matemática</span>
+                            <span class="subject-score" id="desk-mat">—</span>
+                        </div>
+                        <div class="subject-bar-track">
+                            <div class="subject-bar-fill fill-matematica" id="bar-mat" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="subject-item">
+                        <div class="subject-info">
+                            <span class="subject-name">Ciências</span>
+                            <span class="subject-score" id="desk-cien">—</span>
+                        </div>
+                        <div class="subject-bar-track">
+                            <div class="subject-bar-fill fill-ciencias" id="bar-cien" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="subject-item">
+                        <div class="subject-info">
+                            <span class="subject-name">Artes</span>
+                            <span class="subject-score" id="desk-arte">—</span>
+                        </div>
+                        <div class="subject-bar-track">
+                            <div class="subject-bar-fill fill-artes" id="bar-arte" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="agenda-card">
+            <div class="agenda-header">
+                <div class="agenda-title-box">
+                    <i class="hgi hgi-stroke hgi-rounded hgi-calendar-02"></i>
+                    <h3>Agenda da Semana</h3>
+                </div>
+                <div class="agenda-actions">
+                    <span id="agenda-month" class="agenda-month-label">Carregando...</span>
+                    <button class="btn-full-calendar" onclick="window.location.href='agenda.html'">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-calendar-03"></i>
+                        Ver calendário completo
+                    </button>
+                </div>
+            </div>
+
+            <div class="week-strip" id="week-strip"></div>
+
+            <div class="events-container">
+                <h4 class="events-section-title">Compromissos do dia</h4>
+                <div class="events-list" id="events-list"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+   // CONFIGURAÇÃO DO BANCO DE DADOS
+        const firebaseConfig = {
+            apiKey: "AIzaSyAs3OTqOeVVzcxlrcM8Th5ObkhtXca69Ac",
+            authDomain: "mindspace-educacao.firebaseapp.com",
+            projectId: "mindspace-educacao",
+            storageBucket: "mindspace-educacao.firebasestorage.app",
+            messagingSenderId: "569394609531",
+            appId: "1:569394609531:web:9ab5ba6bc2181bc5a911de",
+            databaseURL: "https://mindspace-educacao-default-rtdb.firebaseio.com/"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const database = firebase.database();
+
+        let allTasks = {};
+        let activeDateStr = "";
+        let mediasGlobais = { port: 0, mat: 0, cien: 0, arte: 0 };
+
+        const weekDaysNames = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+        const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+        const pesos = { n1: 20, n2: 20, n3: 20, n_outros: 40, n_prova: 100 };
+
+        const configuracaoMaterias = [
+            { path: 'dlucca/port',   deskId: 'desk-port',  barId: 'bar-port',  key: 'port' },
+            { path: 'dlucca/mat',    deskId: 'desk-mat',   barId: 'bar-mat',   key: 'mat'  },
+            { path: 'hadassa/cien',  deskId: 'desk-cien',  barId: 'bar-cien',  key: 'cien' },
+            { path: 'hadassa/artes',  deskId: 'desk-arte',  barId: 'bar-arte',  key: 'arte' }
+        ];
+
+        function calcMediaComProgresso(data) {
+            if (!data) return { texto: '0.0 / 100', percent: 0 };
+            let notaAtual = 0;
+            let preenchidos = 0;
+            
+            for (const campo of Object.keys(pesos)) {
+                if (data[campo] !== undefined && data[campo] !== "") {
+                    notaAtual += parseFloat(data[campo]) || 0;
+                    preenchidos++;
+                }
+            }
+            if (preenchidos === 0) return { texto: '0.0 / 100', percent: 0 };
+            
+            let tetoFixo = 100;
+            let percentualBarra = (notaAtual / tetoFixo) * 50;
+            return {
+                texto: `${percentualBarra.toFixed(1)} / ${tetoFixo}`,
+                percent: Math.min(percentualBarra, 100)
+            };
+        }
+
+        function atualizarProgressoGeral() {
+            let somaNotas = 
+                (mediasGlobais.port || 0) + 
+                (mediasGlobais.mat || 0) + 
+                (mediasGlobais.cien || 0) + 
+                (mediasGlobais.arte || 0);
+            
+            let mediaFinalGeral = Math.round(somaNotas / 4);
+            
+            const geralFill = document.getElementById('geral-bar-fill');
+            const geralTxt = document.getElementById('geral-bar-percent');
+            if (geralFill) geralFill.style.width = `${mediaFinalGeral}%`;
+            if (geralTxt) geralTxt.innerText = `${mediaFinalGeral}%`;
+        }
+
+        function carregarNotasFirebase() {
+            configuracaoMaterias.forEach(materia => {
+                database.ref(materia.path).on('value', snapshot => {
+                    const data = snapshot.val();
+                    const resultado = calcMediaComProgresso(data);
+                    
+                    const txtEl = document.getElementById(materia.deskId);
+                    const barEl = document.getElementById(materia.barId);
+                    
+                    if (txtEl) txtEl.innerText = resultado.texto;
+                    if (barEl) barEl.style.width = `${resultado.percent}%`;
+                    
+                    mediasGlobais[materia.key] = resultado.percent;
+                    atualizarProgressoGeral();
+                });
+            });
+        }
+        
+        function formatDateString(date) {
+            return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+        }
+
+        function initAgenda() {
+            carregarNotasFirebase();
+
+            const today = new Date();
+            activeDateStr = formatDateString(today);
+
+            renderWeekStrip();
+
+            database.ref('hadassa/artes/agenda').on('value', snapshot => {
+                allTasks = snapshot.val() || {};
+                renderWeekStrip();
+                renderEvents(activeDateStr);
+            });
+        }
+
+        function renderWeekStrip() {
+            const weekStrip = document.getElementById('week-strip') || document.getElementById('week-strip-container');
+            if (!weekStrip) return; 
+            weekStrip.innerHTML = '';
+
+            const today = new Date();
+            const currentDayOfWeek = today.getDay(); 
+            
+            const labelMes = document.getElementById('agenda-month') || document.getElementById('agenda-month-year');
+            if (labelMes) labelMes.innerText = `${monthNames[today.getMonth()]} de ${today.getFullYear()}`;
+
+            for (let i = 0; i < 7; i++) {
+                const dayDate = new Date(today);
+                dayDate.setDate(today.getDate() - currentDayOfWeek + i);
+
+                const dateStr = formatDateString(dayDate);
+                const dayItem = document.createElement('div');
+                dayItem.className = 'day-item';
+                
+                if (dateStr === activeDateStr) {
+                    dayItem.classList.add('day-active');
+                }
+
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'day-name';
+                nameSpan.innerText = weekDaysNames[i];
+
+                const numSpan = document.createElement('span');
+                numSpan.className = 'day-number';
+                numSpan.innerText = dayDate.getDate();
+
+                dayItem.appendChild(nameSpan);
+                dayItem.appendChild(numSpan);
+
+                if (allTasks && allTasks[dateStr] && String(allTasks[dateStr]).trim() !== '') {
+                    const dot = document.createElement('div');
+                    dot.className = 'dot-indicator';
+                    dayItem.appendChild(dot);
+                }
+
+                dayItem.addEventListener('click', () => {
+                    activeDateStr = dateStr;
+                    document.querySelectorAll('.day-item').forEach(el => el.classList.remove('day-active'));
+                    dayItem.classList.add('day-active');
+                    renderEvents(dateStr);
+                });
+
+                weekStrip.appendChild(dayItem);
+            }
+        }
+
+        function renderEvents(dateStr) {
+            const eventsList = document.getElementById('events-list');
+            if (!eventsList) return;
+            eventsList.innerHTML = '';
+
+            let planejamentoDia = allTasks ? allTasks[dateStr] : null;
+
+            if (planejamentoDia && String(planejamentoDia).trim() !== '') {
+                const item = document.createElement('div');
+                item.className = 'event-item';
+                item.innerHTML = `
+                    <div class="event-details">
+                        <span class="event-title">${String(planejamentoDia)}</span>
+                    </div>
+                `;
+                eventsList.appendChild(item);
+            } else {
+                const noEvents = document.createElement('div');
+                noEvents.className = 'no-events-box';
+                noEvents.innerText = 'Nenhum planejamento ou atividade agendada para este dia.';
+                eventsList.appendChild(noEvents);
+            }
+        }
+
+        window.onload = initAgenda;
+    </script>
+</body>
+</html>

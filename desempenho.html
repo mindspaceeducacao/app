@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desempenho | Aluno</title>
+    
+    <link rel="icon" href="../images/logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
+
+    <style>
+        /* --- Reset e Configurações Globais --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: #f3f7fa; 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 40px 24px;
+            overflow-y: auto;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HEADER --- */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .breadcrumb a {
+            color: #0056f5;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: -0.8px;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            font-size: 15px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* --- CARDS DE NOTAS FINAIS --- */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+        }
+
+        .summary-card::before {
+  content: ''; 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 4px; 
+  /* Usa a variável dinâmica ou um degradê padrão */
+  background: var(--card-color); 
+  opacity: 0.7; 
+}
+
+        .summary-card:hover {
+            transform: translateY(-4px);
+            border-color: #cbd5e1;
+            box-shadow: 0 12px 20px -8px rgba(0, 86, 245, 0.12);
+        }
+
+        .summary-card .card-top-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-card .subject-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .summary-card .subject-icon {
+            font-size: 20px;
+            color: #94a3b8;
+            transition: color 0.2s;
+        }
+        .summary-card:hover .subject-icon {
+            color: #0056f5;
+        }
+
+        .summary-card .final-score {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: -0.5px;
+            margin-top: 4px;
+        }
+
+        /* --- CONTAINER PRINCIPAL --- */
+        .details-container {
+            background-color: #ffffff;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            padding: 36px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.02);
+        }
+
+        .details-header {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .details-header label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- LISTA SUSPENSA CUSTOMIZADA COM ÍCONES --- */
+        .custom-select-container {
+            position: relative;
+            width: 100%;
+            max-width: 340px;
+            user-select: none;
+            z-index: 100;
+        }
+
+        .custom-select-trigger {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .trigger-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .trigger-content i {
+            color: #0056f5;
+            font-size: 18px;
+        }
+
+        .custom-select-trigger:hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .custom-select-container.open .custom-select-trigger {
+            border-color: #0056f5;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(0, 86, 245, 0.1);
+        }
+
+        .arrow-icon {
+            font-size: 18px;
+            color: #64748b;
+            transition: transform 0.25s ease;
+        }
+
+        .custom-select-container.open .arrow-icon {
+            transform: rotate(180deg);
+            color: #0056f5;
+        }
+
+        /* Opções do Dropdown */
+        .custom-options-box {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: dropdownFade 0.2s ease;
+        }
+
+        @keyframes dropdownFade {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .custom-select-container.open .custom-options-box {
+            display: flex;
+        }
+
+        .custom-option {
+            padding: 14px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .custom-option i {
+            font-size: 18px;
+            color: #94a3b8;
+            transition: color 0.15s;
+        }
+
+        .custom-option:hover {
+            background-color: #f1f7ff;
+            color: #0056f5;
+        }
+        
+        .custom-option:hover i {
+            color: #0056f5;
+        }
+
+        .custom-option.selected {
+            background-color: #f0f5ff;
+            color: #0056f5;
+            font-weight: 600;
+        }
+
+        .custom-option.selected i {
+            color: #0056f5;
+        }
+
+        /* --- LISTA DE ATIVIDADES VERTICAL --- */
+        .activities-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .activity-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            transition: all 0.25s ease;
+        }
+
+        .activity-card:hover {
+            border-color: #cbd5e1;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.015);
+            transform: translateX(4px);
+        }
+
+        .activity-left-block {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .activity-icon-wrapper {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 20px;
+            transition: all 0.2s ease;
+        }
+        
+        .activity-card:hover .activity-icon-wrapper {
+            background-color: #eff6ff;
+            border-color: #bfdbfe;
+            color: #0056f5;
+        }
+
+        .activity-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .activity-type {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #64748b;
+        }
+        
+        .activity-card:hover .activity-type {
+            color: #0056f5;
+        }
+
+        .activity-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .activity-value-badge {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 10px 16px;
+            border-radius: 10px;
+            min-width: 60px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.01);
+            transition: all 0.2s ease;
+        }
+        
+        .activity-card:hover .activity-value-badge {
+            border-color: #0056f5;
+            color: #0056f5;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+    <header class="page-header">
+        <div class="breadcrumb">
+            <a href="inicio.html">Página Inicial</a> 
+            <i class="hgi hgi-stroke hgi-rounded hgi-arrow-right-01" style="font-size: 12px; color: #94a3b8;"></i> 
+            <span>Desempenho</span>
+        </div>
+        <h1>Meus Desempenho</h1>
+        <p>Acompanhe suas notas finais e o detalhamento de cada atividade prática ou avaliação</p>
+    </header>
+
+    <div class="summary-grid">
+        <div class="summary-card" style="--card-color: linear-gradient(90deg, #0056f5, #3b82f6);">
+            <div class="card-top-info">
+                <span class="subject-name">Língua Portuguesa</span>
+                <i class="hgi hgi-stroke hgi-rounded hgi-book-02 subject-icon"></i>
+            </div>
+            <span class="final-score" id="score-port">—</span>
+        </div>
+        <div class="summary-card" style="--card-color: linear-gradient(90deg, #4338ca, #6056db);">
+            <div class="card-top-info">
+                <span class="subject-name">Matemática</span>
+                <i class="hgi hgi-stroke hgi-rounded hgi-calculator subject-icon"></i>
+            </div>
+            <span class="final-score" id="score-mat">—</span>
+        </div>
+        <div class="summary-card" style="--card-color: linear-gradient(90deg, #10bf8d, #14b37b);">
+            <div class="card-top-info">
+                <span class="subject-name">Ciências</span>
+                <i class="hgi hgi-stroke hgi-rounded hgi-test-tube-01 subject-icon"></i>
+            </div>
+            <span class="final-score" id="score-cien">—</span>
+        </div>
+        <div class="summary-card" style="--card-color: linear-gradient(90deg, #7c3aed, #8f56f0);">
+            <div class="card-top-info">
+                <span class="subject-name">Artes</span>
+                <i class="hgi hgi-stroke hgi-rounded hgi-paint-board subject-icon"></i>
+            </div>
+            <span class="final-score" id="score-artes">—</span>
+        </div>
+    </div>
+
+    <div class="details-container">
+        
+        <div class="details-header">
+            <label>Selecione uma disciplina para detalhar</label>
+            
+            <div class="custom-select-container" id="my-custom-dropdown">
+                <div class="custom-select-trigger" id="dropdown-trigger-text">
+                    <div class="trigger-content">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-book-02" id="trigger-icon"></i>
+                        <span id="trigger-label">Língua Portuguesa</span>
+                    </div>
+                    <i class="hgi hgi-stroke hgi-rounded hgi-arrow-down-01 arrow-icon"></i>
+                </div>
+                <div class="custom-options-box">
+                    <div class="custom-option selected" data-value="dlucca/port" data-icon="hgi-book-02">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-book-02"></i> Língua Portuguesa
+                    </div>
+                    <div class="custom-option" data-value="dlucca/mat" data-icon="hgi-calculator">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-calculator"></i> Matemática
+                    </div>
+                    <div class="custom-option" data-value="hadassa/cien" data-icon="hgi-test-tube-01">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-test-tube-01"></i> Ciências
+                    </div>
+                    <div class="custom-option" data-value="hadassa/artes" data-icon="hgi-paint-board">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-paint-board"></i> Artes
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="activities-list" id="activities-container">
+            </div>
+
+    </div>
+
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAs3OTqOeVVzcxlrcM8Th5ObkhtXca69Ac",
+        authDomain: "mindspace-educacao.firebaseapp.com",
+        projectId: "mindspace-educacao",
+        databaseURL: "https://mindspace-educacao-default-rtdb.firebaseio.com/"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    let dbData = {
+        'dlucca/port': {},
+        'dlucca/mat': {},
+        'hadassa/cien': {},
+        'hadassa/artes': {}
+    };
+
+    let selectedPath = "dlucca/port";
+
+    // Cálculo exato utilizando os IDs reais extraídos do notas.html (n1, n2, n3, n_outros, n_prova)
+    function calcularNotaFinal(data) {
+        if (!data) return '0.0';
+        const campos = ['n1', 'n2', 'n3', 'n_outros', 'n_prova'];
+        let soma = 0;
+        campos.forEach(c => {
+            if (data[c]) soma += parseFloat(data[c]) || 0;
+        });
+        return soma.toFixed(1);
+    }
+
+    // Renderização com chaves idênticas às IDs do professor (t1, t2, t3, titulo_outros)
+    function renderDetalhamentoMateria(path) {
+        const container = document.getElementById('activities-container');
+        if (!container) return;
+
+        const data = dbData[path] || {};
+
+        const atividades = [
+            {
+                tipo: 'Atividade 1 - 20 pontos',
+                nome: data.t1 || 'Primeira Atividade',
+                nota: data.n1 || '0.0',
+                icon: 'hgi-note'
+            },
+            {
+                tipo: 'Atividade 2 - 20 pontos',
+                nome: data.t2 || 'Segunda Atividade',
+                nota: data.n2 || '0.0',
+                icon: 'hgi-task-01'
+            },
+            {
+                tipo: 'Atividade 3 - 20 pontos',
+                nome: data.t3 || 'Terceira Atividade',
+                nota: data.n3 || '0.0',
+                icon: 'hgi-clipboard'
+            },
+            {
+                tipo: 'Outros - 40 pontos',
+                nome: data.titulo_outros || 'Outros',
+                nota: data.n_outros || '0.0',
+                icon: 'hgi-folder-open'
+            },
+            {
+                tipo: 'Avaliação Final - 100 pontos',
+                nome: 'Avaliação Acadêmica Diagnóstica',
+                nota: data.n_prova || '0.0',
+                icon: 'hgi-file-view'
+            }
+        ];
+
+        container.innerHTML = '';
+
+        atividades.forEach(act => {
+            const card = document.createElement('div');
+            card.className = 'activity-card';
+            card.innerHTML = `
+                <div class="activity-left-block">
+                    <div class="activity-icon-wrapper">
+                        <i class="hgi hgi-stroke hgi-rounded ${act.icon}"></i>
+                    </div>
+                    <div class="activity-info">
+                        <span class="activity-type">${act.tipo}</span>
+                        <span class="activity-title">${act.nome}</span>
+                    </div>
+                </div>
+                <div class="activity-value-badge">${parseFloat(act.nota).toFixed(1)}</div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    const caminhosMaterias = [
+        { path: 'dlucca/port', elementId: 'score-port' },
+        { path: 'dlucca/mat', elementId: 'score-mat' },
+        { path: 'hadassa/cien', elementId: 'score-cien' },
+        { path: 'hadassa/artes', elementId: 'score-artes' }
+    ];
+
+    caminhosMaterias.forEach(item => {
+        const materiaRef = ref(db, item.path);
+        onValue(materiaRef, (snapshot) => {
+            const data = snapshot.val() || {};
+            dbData[item.path] = data;
+
+            const scoreEl = document.getElementById(item.elementId);
+            if (scoreEl) {
+                scoreEl.innerText = (calcularNotaFinal(data) / 2).toFixed(1);
+            }
+
+            if (selectedPath === item.path) {
+                renderDetalhamentoMateria(item.path);
+            }
+        });
+    });
+
+    /* --- LÓGICA DO DROPDOWN CUSTOMIZADO --- */
+    const dropdownContainer = document.getElementById('my-custom-dropdown');
+    const dropdownTrigger = document.getElementById('dropdown-trigger-text');
+    const triggerLabel = document.getElementById('trigger-label');
+    const triggerIcon = document.getElementById('trigger-icon');
+    const options = document.querySelectorAll('.custom-option');
+
+    dropdownTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdownContainer.classList.toggle('open');
+    });
+
+    options.forEach(opt => {
+        opt.addEventListener('click', function() {
+            options.forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+
+            const labelText = this.innerText;
+            const iconClass = this.getAttribute('data-icon');
+            selectedPath = this.getAttribute('data-value');
+
+            triggerLabel.innerText = labelText;
+            triggerIcon.className = `hgi hgi-stroke hgi-rounded ${iconClass}`;
+            
+            dropdownContainer.classList.remove('open');
+            renderDetalhamentoMateria(selectedPath);
+        });
+    });
+
+    window.addEventListener('click', () => {
+        dropdownContainer.classList.remove('open');
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+        renderDetalhamentoMateria('dlucca/port');
+    });
+</script>
+</body>
+</html>
