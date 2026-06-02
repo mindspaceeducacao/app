@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindSpace | Portal</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="../images/logo.svg" type="image/png">
+    
+    <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body, html {
+            height: 100%;
+            background-color: #F8FAFC;
+            color: #1E293B;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Lado Esquerdo: Formulário */
+        .login-side {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 20px;
+            background-color: #F8FAFC;
+            overflow-y: auto;
+        }
+
+        .login-content {
+            width: 100%;
+            max-width: 360px;
+            margin: auto;
+            text-align: center;
+        }
+
+        .logo-placeholder {
+            margin-bottom: 24px;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo-placeholder:hover {
+            transform: scale(1.05);
+        }
+
+        .welcome-text {
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            font-weight: 400;
+        }
+
+        /* Seletor Aluno / Professor */
+        .user-type-selector {
+            display: flex;
+            background-color: #E2E8F0;
+            padding: 4px;
+            border-radius: 18px;
+            margin-bottom: 24px;
+            gap: 4px;
+            position: relative;
+        }
+
+        .user-type-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: #64748B;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 15px;
+            transition: all 0.25s ease;
+        }
+
+        .user-type-btn i {
+            font-size: 16px;
+            transition: transform 0.25s ease;
+        }
+
+        .user-type-btn:hover:not(.active) {
+            color: #1E293B;
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .user-type-btn:hover i {
+            transform: translateY(-1px);
+        }
+
+        /* Classe ativa para o botão selecionado */
+        .user-type-btn.active {
+            background-color: #FFFFFF;
+            color: #0D47A1;
+            box-shadow: 0 2px 6px rgba(13, 71, 161, 0.08);
+            font-weight: 550;
+            transform: scale(1.01);
+        }
+
+        /* Container Dinâmico dos Campos com Animação de Fade */
+        .dynamic-fields {
+            animation: fadeIn 0.35s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #1E293B;
+            transition: color 0.2s ease;
+        }
+
+        .form-group:focus-within .form-label {
+            color: #0D47A1;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #CBD5E1;
+            border-radius: 8px;
+            font-size: 14px;
+            background-color: #FFFFFF;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        .form-input:hover {
+            border-color: #94A3B8;
+        }
+
+        .form-input:focus {
+            border-color: #0D47A1;
+            box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.12);
+        }
+
+        .input-icon-right {
+            position: absolute;
+            right: 14px;
+            color: #64748B;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .input-icon-right:hover {
+            color: #0D47A1;
+            transform: scale(1.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background-color: #0D47A1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(13, 71, 161, 0.15);
+        }
+
+        .btn-primary:hover {
+            background-color: #0A3780;
+            box-shadow: 0 6px 16px rgba(10, 55, 128, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 6px rgba(10, 55, 128, 0.2);
+        }
+
+        .btn-primary svg {
+            transition: transform 0.25s ease;
+        }
+
+        .btn-primary:hover svg {
+            transform: translateX(3px);
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #E2E8F0;
+            margin: 24px 0;
+            width: 100%;
+        }
+
+        /* Lado Direito: Imagem com efeito suave */
+        .image-side {
+            flex: 1;
+            background-image: url('../images/fundo-portal.jpeg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        /* Ocultar elementos que não estão ativos */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsividade */
+        @media (max-width: 900px) {
+            .image-side {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <main class="login-side">
+            <div class="login-content">
+                
+                <div class="logo-placeholder">
+                    <img src="../images/mindspace.svg" alt="MindSpace">
+                </div>
+
+                <div class="divider"></div>
+
+                <p class="welcome-text">Bem vindo(a) ao MindSpace. Insira suas credenciais e desfrute da melhor plataforma de educação!</p>
+
+                <div class="user-type-selector">
+    <button type="button" class="user-type-btn active" onclick="switchProfile(this, 'aluno')">
+        <i class="hgi hgi-stroke hgi-rounded hgi-student-card"></i>
+        Aluno
+    </button>
+    <button type="button" class="user-type-btn" onclick="switchProfile(this, 'professor')">
+        <i class="hgi hgi-stroke hgi-rounded hgi-teacher"></i>
+        Professor
+    </button>
+</div>
+
+                <form id="loginForm">
+    
+    <div id="fields-container" class="dynamic-fields">
+        
+        <div id="group-aluno" class="form-group">
+            <label class="form-label">
+                <i class="hgi hgi-stroke hgi-rounded hgi-user-group"></i>
+                Código da Turma
+            </label>
+            <input type="text" id="aluno-codigo" class="form-input"  autocomplete="off">
+        </div>
+
+        <div id="group-professor" class="hidden">
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="hgi hgi-stroke hgi-rounded hgi-user"></i>
+                    Seu ID
+                </label>
+                <input type="text" id="professor-user" class="form-input" autocomplete="username">
+            </div>
+
+            <div class="form-group" style="margin-top: 16px;">
+                <label class="form-label">
+                    <i class="hgi hgi-stroke hgi-rounded hgi-key-01"></i>
+                    Senha
+                </label>
+                <div class="input-wrapper">
+                    <input type="password" id="password-input" class="form-input" autocomplete="current-password">
+                    <span class="input-icon-right" onclick="togglePasswordVisibility()">
+                        <i id="password-icon" class="hgi hgi-stroke hgi-rounded hgi-view"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <p id="error-msg" style="display: none; color: #dc2626; font-size: 0.85rem; font-weight: 500; text-align: center; margin-top: 1rem; padding: 0.6rem 1rem; background: rgba(220,38,38,0.07); border-radius: 8px; border: 1px solid rgba(220,38,38,0.15); animation: fadeIn 0.3s ease;"></p>
+
+    <button type="submit" class="btn-primary">
+        Entrar 
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" color="white" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3.00006 7.63576C4.6208 4.29965 8.04185 2 12 2C17.5229 2 22 6.47715 22 12C22 17.5228 17.5229 22 12 22C8.04185 22 4.6208 19.7004 3.00006 16.3642"></path>
+            <path d="M11 8C11 8 15 10.946 15 12C15 13.0541 11 16 11 16M14.5 12H2"></path>
+        </svg>
+    </button>
+</form>
+
+                <div class="divider"></div>
+
+            </div>
+        </main>
+
+        <aside class="image-side"></aside>
+
+    </div>
+
+   <script>
+    // Variável para controlar qual perfil está selecionado no momento ('aluno' ou 'professor')
+    let currentProfile = 'aluno';
+
+    // URLs de redirecionamento puxados de aluno.html e professor.html
+    const REDIRECT_ALUNO = "../aluno/inicio";
+    const REDIRECT_PROFESSOR = "../professor/inicio";
+
+    // Credenciais dos professores coletadas de professor.html
+    const professorAccounts = {
+        "hadassaartes": { pass: "hbmind26", materia: "Artes" },
+        "dluccaport":   { pass: "dlmind26", materia: "Português" },
+        "hadassacien":  { pass: "hbmind26", materia: "Ciências" },
+        "dluccamat":    { pass: "dlmind26", materia: "Matemática" }
+    };
+
+    // Função para alternar entre as abas de perfis
+    function switchProfile(clickedButton, profile) {
+        currentProfile = profile;
+        const buttons = document.querySelectorAll('.user-type-btn');
+        const alunoGroup = document.getElementById('group-aluno');
+        const professorGroup = document.getElementById('group-professor');
+        const container = document.getElementById('fields-container');
+        const errorMsg = document.getElementById('error-msg');
+
+        // Esconde mensagens de erro antigas ao trocar de aba
+        errorMsg.style.display = 'none';
+
+        // Atualiza o estado visual do botão selecionado
+        buttons.forEach(btn => btn.classList.remove('active'));
+        clickedButton.classList.add('active');
+
+        // Reinicia a animação de transição dos campos
+        container.style.animation = 'none';
+        container.offsetHeight; /* Trigger reflow */
+        container.style.animation = null;
+
+        // Mostra/oculta os campos de acordo com a aba
+        if (profile === 'aluno') {
+            alunoGroup.classList.remove('hidden');
+            professorGroup.classList.add('hidden');
+        } else {
+            alunoGroup.classList.add('hidden');
+            professorGroup.classList.remove('hidden');
+        }
+    }
+
+    // Função para exibir/esconder senha
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById('password-input');
+        const passwordIcon = document.getElementById('password-icon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            passwordIcon.className = 'hgi hgi-stroke hgi-rounded hgi-view-off';
+        } else {
+            passwordInput.type = 'password';
+            passwordIcon.className = 'hgi hgi-stroke hgi-rounded hgi-view';
+        }
+    }
+
+    // Gerenciador do evento de Enviar Formulário (Submit)
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const errorMsg = document.getElementById('error-msg');
+        errorMsg.style.display = 'none'; // Reseta erro
+
+        if (currentProfile === 'aluno') {
+            // --- LÓGICA DE ALUNO ---
+            const codigoDigitado = document.getElementById('aluno-codigo').value.trim().toLowerCase();
+            const CORRECT_CODE = "17h3ba";
+
+            if (codigoDigitado === CORRECT_CODE) {
+                window.location.href = REDIRECT_ALUNO;
+            } else {
+                errorMsg.innerText = "Código incorreto. Verifique sua carta de acesso.";
+                errorMsg.style.display = 'block';
+            }
+
+        } else {
+            // --- LÓGICA DE PROFESSOR ---
+            const user = document.getElementById('professor-user').value.toLowerCase().trim();
+            const pass = document.getElementById('password-input').value;
+
+            if (professorAccounts[user] && professorAccounts[user].pass === pass) {
+                // Guarda os dados na sessão assim como o seu professor.html antigo fazia
+                sessionStorage.setItem('logado', 'true');
+                sessionStorage.setItem('usuario', user);
+                sessionStorage.setItem('materia', professorAccounts[user].materia);
+                
+                window.location.href = REDIRECT_PROFESSOR;
+            } else {
+                errorMsg.innerText = "Credenciais inválidas. Tente novamente.";
+                errorMsg.style.display = 'block';
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
