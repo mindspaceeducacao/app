@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindSpace | Selecionar Matéria</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body, html {
+            height: 100%;
+            background-color: #F8FAFC;
+            color: #1E293B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .selection-container {
+            width: 100%;
+            max-width: 480px;
+            padding: 40px 24px;
+            text-align: center;
+            animation: fadeUp 0.4s ease-out;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background-color: rgba(13, 71, 161, 0.08);
+            color: #0D47A1;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1E293B;
+            margin-bottom: 4px;
+        }
+
+        .class-subtitle {
+            font-size: 15px;
+            color: #475569;
+            margin-bottom: 32px;
+            font-weight: 500;
+        }
+
+        /* Grid de Opções de Matérias */
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        /* Card/Botão de Matéria */
+        .subject-btn {
+            background-color: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            border-radius: 12px;
+            padding: 24px 16px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+        }
+
+        .subject-btn i {
+            font-size: 28px;
+            color: #64748B;
+            transition: all 0.25s ease;
+        }
+
+        .subject-btn span {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1E293B;
+            transition: color 0.25s ease;
+        }
+
+        /* Efeitos Hover (Passar o mouse) */
+        .subject-btn:hover {
+            border-color: #0D47A1;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(13, 71, 161, 0.08);
+        }
+
+        .subject-btn:hover i {
+            color: #0D47A1;
+            transform: scale(1.1);
+        }
+
+        /* Efeito Ativo (Clique do mouse) */
+        .subject-btn:active {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(13, 71, 161, 0.04);
+        }
+
+        .footer-info {
+            font-size: 12px;
+            color: #94A3B8;
+            margin-top: 32px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="selection-container">
+        <div class="welcome-badge">
+            <i class="hgi hgi-stroke hgi-rounded hgi-teacher"></i>
+            <span id="professor-display">Professor</span>
+        </div>
+        
+        <h1 id="turma-display">Carregando turma...</h1>
+        <p class="class-subtitle">Selecione a matéria que irá lecionar agora:</p>
+
+        <div class="subjects-grid" id="subjects-container"></div>
+
+        <p class="footer-info">MindSpace Educação • Painel do Docente</p>
+    </div>
+
+    <script>
+        // Coleta os novos dados definidos no portal.html
+        const usuario = sessionStorage.getItem('usuario');
+        const turma = sessionStorage.getItem('turma');
+        const logado = sessionStorage.getItem('logado');
+
+        // URL para redirecionamento final após clicar na matéria
+        const REDIRECT_DASHBOARD = "https://mindspaceeducacao.github.io/app/professor/dashboard.html";
+
+        // Mapeamento dinâmico de matérias e ícones Hugeicons com base nos IDs fornecidos
+        const gradeMaterias = {
+            "dlucca.1ano": [
+                { nome: "Matemática", icone: "hgi-matrix" },
+                { nome: "Português", icone: "hgi-book-open-01" }
+            ],
+            "hadassa.1ano": [
+                { nome: "Ciências", icone: "hgi-atom" },
+                { nome: "Artes", icone: "hgi-paint-palette" }
+            ]
+            // Para adicionar novos professores futuramente, basta mapear a chave aqui embaixo:
+            // "novo.professor": [ { nome: "História", icone: "hgi-notebook" } ]
+        };
+
+        // Verificação de Segurança (Garante que está realmente logado)
+        if (logado !== 'true' || !usuario) {
+            window.location.href = "https://mindspaceeducacao.github.io/app/portal.html";
+        } else {
+            // Insere os dados textuais recuperados na tela
+            document.getElementById('professor-display').innerText = `Professor: ${usuario}`;
+            document.getElementById('turma-display').innerText = turma || "1° Ano do Ensino Fundamental";
+
+            // Executa a montagem dinâmica da grade
+            gerarBotoesDeMaterias(usuario);
+        }
+
+        function gerarBotoesDeMaterias(profId) {
+            const container = document.getElementById('subjects-container');
+            container.innerHTML = ""; // Limpa a área
+
+            // Obtém a lista correspondente ao ID ou um array vazio se não achar
+            const materias = gradeMaterias[profId] || [];
+
+            if (materias.length === 0) {
+                container.innerHTML = `<p style="grid-column: span 2; color: #dc2626; font-size: 14px;">Nenhuma matéria vinculada a este perfil.</p>`;
+                return;
+            }
+
+            materias.forEach(materia => {
+                // Cria o botão estruturado
+                const botao = document.createElement('button');
+                botao.type = "button";
+                botao.className = "subject-btn";
+                
+                botao.innerHTML = `
+                    <i class="hgi hgi-stroke hgi-rounded ${materia.icone}"></i>
+                    <span>${materia.nome}</span>
+                `;
+
+                // Configura a ação do clique
+                botao.onclick = () => salvarESeguir(materia.nome);
+
+                container.appendChild(botao);
+            });
+        }
+
+        function salvarESeguir(materiaNome) {
+            // 1. Salva a matéria selecionada isoladamente
+            sessionStorage.setItem('materia', materiaNome);
+
+            // 2. Cria o código padronizado solicitado: professor-turma-materia
+            // Limpa espaços e acentos da turma e matéria para evitar quebras de URL/Sistemas
+            const turmaLimpa = turma.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9.]/g, "");
+            const materiaLimpa = materiaNome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+            
+            const codigoUnificado = `${usuario}-${turmaLimpa}-${materiaLimpa}`;
+
+            // 3. Salva o código composto gerado no sessionStorage
+            sessionStorage.setItem('codigo_combinado', codigoUnificado);
+
+            // Exemplo gerado no console: dlucca.1ano-1anodoensinofundamental-matematica
+            console.log("Código unificado gerado para o sistema:", codigoUnificado);
+
+            // 4. Encaminha para o Dashboard final na mesma aba
+            window.location.href = REDIRECT_DASHBOARD;
+        }
+    </script>
+</body>
+</html>
