@@ -149,20 +149,21 @@
         // Coleta os novos dados definidos no portal.html
         const usuario = sessionStorage.getItem('usuario');
         const turma = sessionStorage.getItem('turma');
+        const nome = sessionStorage.getItem('nome');
         const logado = sessionStorage.getItem('logado');
 
         // URL para redirecionamento final após clicar na matéria
-        const REDIRECT_DASHBOARD = "https://mindspaceeducacao.github.io/app/professor/dashboard.html";
+        const REDIRECT_DASHBOARD = "inicio";
 
         // Mapeamento dinâmico de matérias e ícones Hugeicons com base nos IDs fornecidos
         const gradeMaterias = {
             "dlucca.1ano": [
-                { nome: "Matemática", icone: "hgi-matrix" },
-                { nome: "Português", icone: "hgi-book-open-01" }
+                { nome: "Matemática", icone: "hgi-calculator" },
+                { nome: "Português", icone: "hgi-book-02" }
             ],
             "hadassa.1ano": [
-                { nome: "Ciências", icone: "hgi-atom" },
-                { nome: "Artes", icone: "hgi-paint-palette" }
+                { nome: "Ciências", icone: "hgi-test-tube-01" },
+                { nome: "Artes", icone: "hgi-paint-board" }
             ]
             // Para adicionar novos professores futuramente, basta mapear a chave aqui embaixo:
             // "novo.professor": [ { nome: "História", icone: "hgi-notebook" } ]
@@ -170,10 +171,10 @@
 
         // Verificação de Segurança (Garante que está realmente logado)
         if (logado !== 'true' || !usuario) {
-            window.location.href = "https://mindspaceeducacao.github.io/app/portal.html";
+            window.location.href = "../index";
         } else {
             // Insere os dados textuais recuperados na tela
-            document.getElementById('professor-display').innerText = `Professor: ${usuario}`;
+            document.getElementById('professor-display').innerText = `Olá, ${nome}!`;
             document.getElementById('turma-display').innerText = turma || "1° Ano do Ensino Fundamental";
 
             // Executa a montagem dinâmica da grade
@@ -222,7 +223,7 @@
             const codigoUnificado = `${usuario}-${turmaLimpa}-${materiaLimpa}`;
 
             // 3. Salva o código composto gerado no sessionStorage
-            sessionStorage.setItem('codigo_combinado', codigoUnificado);
+            sessionStorage.setItem('codigo', codigoUnificado);
 
             // Exemplo gerado no console: dlucca.1ano-1anodoensinofundamental-matematica
             console.log("Código unificado gerado para o sistema:", codigoUnificado);
