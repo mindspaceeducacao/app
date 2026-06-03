@@ -347,9 +347,15 @@
     // Variável para controlar qual perfil está selecionado no momento ('aluno' ou 'professor')
     let currentProfile = 'aluno';
 
-    // URLs de redirecionamento puxados de aluno.html e professor.html
-    const REDIRECT_ALUNO = "aluno/inicio";
+    // Rota padrão caso precise (opcional)
     const REDIRECT_PROFESSOR = "professor/select";
+
+    // --- CONFIGURAÇÃO DE MÚLTIPLAS TURMAS PARA ALUNOS ---
+    // Adicione aqui os códigos de acesso e para onde cada um deve redirecionar
+    const alunoCodigos = {
+        "17h3ba": "aluno/1ano/inicio", // Código antigo redirecionando para a Turma A
+        "25x9yz": "aluno/2ano/inicio", // Novo código para a Turma B
+    };
 
     // Credenciais dos professores coletadas de professor.html
     const professorAccounts = {
@@ -410,12 +416,13 @@
         errorMsg.style.display = 'none'; // Reseta erro
 
         if (currentProfile === 'aluno') {
-            // --- LÓGICA DE ALUNO ---
+            // --- LÓGICA DE ALUNO MODIFICADA ---
             const codigoDigitado = document.getElementById('aluno-codigo').value.trim().toLowerCase();
-            const CORRECT_CODE = "17h3ba";
 
-            if (codigoDigitado === CORRECT_CODE) {
-                window.location.href = REDIRECT_ALUNO;
+            // Verifica se o código digitado existe dentro do nosso objeto 'alunoCodigos'
+            if (alunoCodigos[codigoDigitado]) {
+                // Se existir, redireciona para a URL específica daquele código
+                window.location.href = alunoCodigos[codigoDigitado];
             } else {
                 errorMsg.innerText = "Código incorreto. Verifique sua carta de acesso.";
                 errorMsg.style.display = 'block';
