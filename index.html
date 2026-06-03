@@ -430,6 +430,7 @@
                 // Guarda os dados na sessão assim como o seu professor.html antigo fazia
                 sessionStorage.setItem('logado', 'true');
                 sessionStorage.setItem('usuario', user);
+                sessionStorage.setItem('nome', nome);
                 sessionStorage.setItem('turma', professorAccounts[user].turma);
                 
                 window.location.href = REDIRECT_PROFESSOR;
