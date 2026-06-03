@@ -353,10 +353,8 @@
 
     // Credenciais dos professores coletadas de professor.html
     const professorAccounts = {
-        "hadassaartes": { pass: "hbmind26", materia: "Artes" },
-        "dluccaport":   { pass: "dlmind26", materia: "Português" },
-        "hadassacien":  { pass: "hbmind26", materia: "Ciências" },
-        "dluccamat":    { pass: "dlmind26", materia: "Matemática" }
+        "hadassa.1ano": { pass: "hbmind26", turma:"1° Ano do Ensino Fundamental" },
+        "dlucca.1ano":   { pass: "dlmind26", turma:"1° Ano do Ensino Fundamental" },
     };
 
     // Função para alternar entre as abas de perfis
@@ -432,7 +430,7 @@
                 // Guarda os dados na sessão assim como o seu professor.html antigo fazia
                 sessionStorage.setItem('logado', 'true');
                 sessionStorage.setItem('usuario', user);
-                sessionStorage.setItem('materia', professorAccounts[user].materia);
+                sessionStorage.setItem('turma', professorAccounts[user].turma);
                 
                 window.location.href = REDIRECT_PROFESSOR;
             } else {
