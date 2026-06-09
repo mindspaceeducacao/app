@@ -214,25 +214,19 @@
         }
 
         function salvarESeguir(materiaNome) {
-            // 1. Salva a matéria selecionada isoladamente
-            sessionStorage.setItem('materia', materiaNome);
+    // 1. Salva a matéria original e a versão limpa para as rotas
+    sessionStorage.setItem('materia', materiaNome);
+    
+    const turmaLimpa = turma.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "").match(/\d+ano/)?.[0] || "1ano";
+    const materiaLimpa = materiaNome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+    
+    // Grava as versões mastigadas para o Firebase usar depois
+    sessionStorage.setItem('turma_limpa', turmaLimpa);
+    sessionStorage.setItem('materia_limpa', materiaLimpa);
 
-            // 2. Cria o código padronizado solicitado: professor-turma-materia
-            // Limpa espaços e acentos da turma e matéria para evitar quebras de URL/Sistemas
-            const turmaLimpa = turma.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9.]/g, "");
-            const materiaLimpa = materiaNome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
-            
-            const codigoUnificado = `${usuario}-${turmaLimpa}-${materiaLimpa}`;
-
-            // 3. Salva o código composto gerado no sessionStorage
-            sessionStorage.setItem('codigo', codigoUnificado);
-
-            // Exemplo gerado no console: dlucca.1ano-1anodoensinofundamental-matematica
-            console.log("Código unificado gerado para o sistema:", codigoUnificado);
-
-            // 4. Encaminha para o Dashboard final na mesma aba
-            window.location.href = REDIRECT_DASHBOARD;
-        }
+    // 2. Encaminha para o Dashboard do professor
+    window.location.href = REDIRECT_PROFESSOR; 
+}
     </script>
 </body>
 </html>
