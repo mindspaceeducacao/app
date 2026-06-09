@@ -359,8 +359,8 @@
 
     // Credenciais dos professores coletadas de professor.html
     const professorAccounts = {
-        "hadassa.1ano": { pass: "hbmind26", turma:"1° Ano do Ensino Fundamental", nome:"Hadassa Burbon", turma-curto:"1ano" },
-        "dlucca.1ano":   { pass: "dlmind26", turma:"1° Ano do Ensino Fundamental", nome:"Daniel Lucca", turma-curto:"1ano" },
+        "hadassa.1ano": { pass: "hbmind26", turma:"1° Ano do Ensino Fundamental", nome:"Hadassa Burbon", turmacurto:"1ano" },
+        "dlucca.1ano":   { pass: "dlmind26", turma:"1° Ano do Ensino Fundamental", nome:"Daniel Lucca", turmacurto:"1ano" },
     };
 
     // Função para alternar entre as abas de perfis
@@ -439,7 +439,7 @@
                 sessionStorage.setItem('usuario', user);
                 sessionStorage.setItem('nome', professorAccounts[user].nome);
                 sessionStorage.setItem('turma', professorAccounts[user].turma);
-                sessionStorage.setItem('turma-curto', professorAccounts[user].turma-curto);
+                sessionStorage.setItem('turmacurto', professorAccounts[user].turmacurto);
                 
                 window.location.href = REDIRECT_PROFESSOR;
             } else {
