@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registros | Professor</title>
+
+<link rel="icon" href="../images/logo.svg" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css?v=2">
+
+<style>
+  /* --- Reset e Base Elegante --- */
+  * { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: 'Inter', sans-serif; 
+    -webkit-font-smoothing: antialiased; 
+  }
+  
+  body {
+    background-color: #f8fafc; /* Um fundo cinza-azulado bem sutil e limpo */
+    color: #0f172a;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 60px 24px;
+    overflow-y: auto;
+  }
+
+  /* --- Container Central Expandido para PC --- */
+  .workspace-container {
+    width: 100%;
+    max-width: 900px; /* Largura ideal para leitura e organização no PC */
+    animation: smoothFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes smoothFadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- Cabeçalho Minimalista e Isolado --- */
+  .page-header {
+    margin-bottom: 36px;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+
+  .breadcrumb a {
+    color: #0056f5;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .page-header h1 {
+    font-size: 36px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+
+  .page-header p {
+    font-size: 15px;
+    color: #64748b;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+
+  /* --- Bloco de Conteúdo (Estilo Card Único Premium) --- */
+  .content-card {
+    background: #ffffff;
+    border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    padding: 48px;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.02), 0 12px 32px -4px rgba(15, 23, 42, 0.03);
+  }
+
+  /* --- Cabeçalhos de Secção Integrados --- */
+  .section-group {
+    margin-bottom: 36px;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .section-title i {
+    font-size: 22px;
+    color: #475569;
+  }
+
+  .section-title h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: -0.3px;
+  }
+
+  /* --- Grid Moderno de Opções (Visual de Grade Fluida) --- */
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  /* --- O Item de Seleção (A Estrela do Novo Design) --- */
+  .option-item {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    user-select: none;
+  }
+
+  .option-item:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px -4px rgba(15, 23, 42, 0.04);
+  }
+
+  /* Estado quando o Checkbox está marcado */
+  .option-item.checked-item {
+    border-color: #0056f5;
+    background: #f0f7ff;
+    box-shadow: 0 4px 12px -2px rgba(0, 86, 245, 0.05);
+  }
+
+  /* Customização Escondida do Checkbox Nativo */
+  .option-item input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    margin-right: 14px;
+    cursor: pointer;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .option-item input[type="checkbox"]:checked {
+    background: #0056f5;
+    border-color: #0056f5;
+  }
+
+  /* Ícone Unicode Correto da Hugeicons Injetado */
+  .option-item input[type="checkbox"]:checked::after {
+    content: '㶩'; 
+    font-family: 'hgi-stroke-rounded';
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .option-item label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    line-height: 1.4;
+    transition: color 0.2s;
+  }
+
+  .option-item.checked-item label {
+    color: #0056f5;
+  }
+
+  /* --- Divisores de Linha Sutis --- */
+  .divider {
+    height: 1px;
+    background: #f1f5f9;
+    margin: 40px 0;
+  }
+
+  /* --- Inputs Dinâmicos (Conteúdo Extra) --- */
+  .extra-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .dynamic-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8fafc;
+    padding: 8px 8px 8px 18px;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    animation: smoothScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes smoothScaleIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .dynamic-row i.hgi-checkmark-circle-02 {
+    color: #0056f5;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .input-custom {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 10px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0f172a;
+  }
+
+  .input-custom::placeholder {
+    color: #94a3b8;
+  }
+
+  .btn-remove {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 20px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    transition: all 0.2s;
+  }
+
+  .btn-remove:hover {
+    color: #ef4444;
+    background-color: #fef2f2;
+  }
+
+  /* --- Botões de Ação Avançados --- */
+  .btn-add {
+    width: 100%;
+    padding: 16px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 16px;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+
+  .btn-add:hover {
+    border-color: #0056f5;
+    color: #0056f5;
+    background: #f0f7ff;
+  }
+
+  .footer-actions {
+    margin-top: 48px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .btn-save {
+    padding: 16px 200px;
+    background: #0056f5;
+    color: #ffffff;
+    border: none;
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-save:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px -6px rgba(0, 86, 245, 0.35);
+    filter: brightness(1.05);
+  }
+
+  .btn-save:active {
+    transform: scale(0.98);
+  }
+</style>
+</head>
+<body>
+
+<div class="workspace-container">
+  
+  <header class="page-header">
+    <div class="breadcrumb">
+      <a href="inicio">Página Inicial</a> 
+      <i class="hgi hgi-stroke hgi-rounded hgi-arrow-right-01" style="font-size: 12px; color: #94a3b8; margin: 0 2px;"></i> 
+      <span>Conteúdos</span>
+    </div>
+    <h1>Registros</h1>
+    <p id="instrucao-materia">Carregando contexto da disciplina...</p>
+  </header>
+
+  <div class="content-card">
+
+    <div class="section-group" id="container-teorico">
+      <div class="section-title">
+        <i class="hgi hgi-stroke hgi-rounded hgi-notebook-01"></i>
+        <h3>Conteúdo Teórico</h3>
+      </div>
+      <div class="options-grid" id="grid-teorico"></div>
+    </div>
+
+    <div class="divider" id="divider-teorico"></div>
+
+    <div class="section-group" id="container-pratico">
+      <div class="section-title">
+        <i class="hgi hgi-stroke hgi-rounded hgi-note-01"></i>
+        <h3>Atividades Práticas</h3>
+      </div>
+      <div class="options-grid" id="grid-pratico"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-group">
+      <div class="section-title">
+        <i class="hgi hgi-stroke hgi-rounded hgi-folder-add"></i>
+        <h3>Conteúdo Extra</h3>
+      </div>
+      
+      <div class="extra-container" id="extra-inputs"></div>
+      
+      <button class="btn-add" onclick="adicionarCampo()">
+        <i class="hgi hgi-stroke hgi-rounded hgi-plus-sign-circle"></i>
+        Adicionar outro tópico personalizado
+      </button>
+    </div>
+
+<div class="divider"></div>
+
+    <div class="footer-actions">
+      <button class="btn-save" onclick="finalizenLancamento()">
+        Salvar Registro
+        <i class="hgi hgi-stroke hgi-rounded hgi-floppy-disk"></i>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAs3OTqOeVVzcxlrcM8Th5ObkhtXca69Ac",
+    authDomain: "mindspace-educacao.firebaseapp.com",
+    projectId: "mindspace-educacao",
+    storageBucket: "mindspace-educacao.firebasestorage.app",
+    messagingSenderId: "569394609531",
+    appId: "1:569394609531:web:9ab5ba6bc2181bc5a911de",
+    databaseURL: "https://mindspace-educacao-default-rtdb.firebaseio.com/"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const usuarioOriginal = sessionStorage.getItem('usuario') || "hadassa";
+  const usuarioFull = usuarioOriginal.toLowerCase().replace(/\./g, '').trim(); 
+
+    const nome = sessionStorage.getItem('nome') || "Hadassa Burbon";
+
+  const turmaOriginal = sessionStorage.getItem('turma') || "1ano";
+  const turmaLimpa = turmaOriginal.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "").match(/\d+ano/)?.[0] || "1ano";
+
+  const materiaOriginal = sessionStorage.getItem('materia') || "Artes";
+  const materiaLimpa = materiaOriginal.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+  
+  const materiaDb = ref(db, `${usuarioFull}/${turmaLimpa}/${materiaLimpa}/trabalhados`);
+
+  document.getElementById('instrucao-materia').innerText = `${nome}, selecione os tópicos e atividades que concluiu para a matéria de ${materiaOriginal}.`;
+
+  const opcoesPorMateria = {
+    "Artes": {
+      teorico: [],
+      pratico: ["Aula 1", "Aula 2", "Aula 3"]
+    },
+    "Ciências": {
+      teorico: ["Capítulo 1: O Corpo Humano", "Capítulo 2: Os 5 sentidos", "Capítulo 3: Higiene e Saúde"],
+      pratico: ["Praticando - Capítulo 1", "Revisando - Capítulo 1", "Praticando - Capítulo 2", "Revisando - Capítulo 2", "Praticando - Capítulo 3", "Revisando - Capítulo 3"]
+    },
+    "Português": {
+      teorico: ["Capítulo 1: O Alfabeto", "Capítulo 2: As Sílabas", "Capítulo 3: Substantivo e Adjetivo"],
+      pratico: ["Praticando - Capítulo 1", "Revisando - Capítulo 1", "Praticando - Capítulo 2", "Revisando - Capítulo 2", "Praticando - Capítulo 3", "Revisando - Capítulo 3"]
+    },
+    "Matemática": {
+      teorico: ["Capítulo 1: Os Números", "Capítulo 2: As Formas geométricas", "Capítulo 3: Grandezas e medidas"],
+      pratico: ["Praticando - Capítulo 1", "Revisando - Capítulo 1", "Praticando - Capítulo 2", "Revisando - Capítulo 2", "Praticando - Capítulo 3", "Revisando - Capítulo 3"]
+    }
+  };
+
+  const config = opcoesPorMateria[materiaOriginal] || { teorico: [], pratico: [] };
+
+  const renderGrid = (containerId, lista) => {
+    const container = document.getElementById(containerId);
+    if (lista.length === 0) {
+      if (containerId === 'grid-teorico') {
+        document.getElementById('container-teorico').style.display = 'none';
+        document.getElementById('divider-teorico').style.display = 'none';
+      }
+      return;
+    }
+    lista.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'option-item';
+      div.innerHTML = `<input type="checkbox" value="${item}" id="cb-${item}"><label for="cb-${item}">${item}</label>`;
+      
+      const checkbox = div.querySelector('input');
+      
+      div.onclick = (e) => { 
+        if (e.target.tagName !== 'INPUT') {
+          checkbox.checked = !checkbox.checked;
+        }
+        if (checkbox.checked) {
+          div.classList.add('checked-item');
+        } else {
+          div.classList.remove('checked-item');
+        }
+      };
+      container.appendChild(div);
+    });
+  };
+
+  renderGrid('grid-teorico', config.teorico);
+  renderGrid('grid-pratico', config.pratico);
+
+  window.adicionarCampo = () => {
+    const container = document.getElementById('extra-inputs');
+    const div = document.createElement('div');
+    div.className = 'dynamic-row';
+    div.innerHTML = `
+      <i class="hgi hgi-stroke hgi-rounded hgi-checkmark-circle-02"></i>
+      <input type="text" class="input-custom" placeholder="Escreva o conteúdo extra...">
+      <button class="btn-remove" onclick="this.parentElement.remove()"><i class="hgi hgi-stroke hgi-delete-02"></i></button>
+    `;
+    container.appendChild(div);
+    div.querySelector('input').focus();
+  };
+
+  window.finalizenLancamento = () => {
+    const selecionados = [];
+    document.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => selecionados.push(cb.value));
+    document.querySelectorAll('.input-custom').forEach(input => {
+      if (input.value.trim()) selecionados.push(input.value.trim());
+    });
+
+    if (selecionados.length === 0) {
+      alert("⚠️ Selecione pelo menos um item antes de avançar.");
+      return;
+    }
+
+    push(materiaDb, {
+      itens: selecionados,
+      data: new Date().toLocaleDateString('pt-BR'),
+      hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+    }).then(() => {
+      alert("✅ Aula registada com sucesso!");
+      window.location.href = "inicio.html";
+    }).catch(err => {
+      console.error(err);
+      alert("Ocorreu um erro ao guardar os dados.");
+    });
+  };
+</script>
+
+</body>
+</html>

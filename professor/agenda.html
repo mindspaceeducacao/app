@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda | Professor</title>
+
+<link rel="icon" href="../images/logo.svg" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css?v=2">
+
+<style>
+  /* --- Reset e Base Ultra Clean --- */
+  * { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: 'Inter', sans-serif; 
+    -webkit-font-smoothing: antialiased; 
+  }
+  
+  body {
+    background-color: #f8fafc;
+    color: #0f172a;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 60px 24px;
+    overflow-y: auto;
+  }
+
+  .workspace-container {
+    width: 100%;
+    max-width: 840px;
+    animation: smoothFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes smoothFadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- Cabeçalho Minimalista --- */
+  .page-header {
+    margin-bottom: 32px;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+
+  .breadcrumb a {
+    color: #0056f5;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .page-header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.8px;
+  }
+
+  /* --- Card Principal Premium --- */
+  .content-card {
+    background: #ffffff;
+    border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    padding: 40px;
+    box-shadow: 0 4px 30px -4px rgba(15, 23, 42, 0.02), 0 16px 40px -8px rgba(15, 23, 42, 0.04);
+  }
+
+  /* --- Nova Navegação Elegante (Sem o bloco escuro pesado) --- */
+  .calendar-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .month-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .month-title-wrapper i {
+    font-size: 24px;
+    color: #0056f5;
+    background: rgba(0, 86, 245, 0.06);
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .month-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: -0.3px;
+    text-transform: capitalize;
+  }
+
+  .nav-btns {
+    display: flex;
+    gap: 6px;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 12px;
+  }
+
+  .btn-nav {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #475569;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .btn-nav:hover {
+    background: #ffffff;
+    color: #0056f5;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  }
+
+  .btn-nav i {
+    font-size: 18px;
+  }
+
+  /* --- Estrutura do Calendário Moderno --- */
+  .weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .weekdays span {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+  }
+
+  /* --- Bloco do Dia Invisível / Espaçador --- */
+  .day-empty {
+    aspect-ratio: 1/1;
+  }
+
+  /* --- Card do Dia Modernizado --- */
+  .day {
+    aspect-ratio: 1/1;
+    border-radius: 14px;
+    border: 1px solid #f1f5f9;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: #334155;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .day:hover {
+    border-color: #0056f5;
+    background: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px -4px rgba(0, 86, 245, 0.08);
+    color: #0056f5;
+  }
+
+  /* Dia Atual em Destaque Sutil, estilo iOS/Google */
+  .day.today {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+  }
+
+  .day.today:hover {
+    background: #1e293b;
+    border-color: #1e293b;
+    color: #ffffff;
+    box-shadow: 0 6px 16px -4px rgba(15, 23, 42, 0.2);
+  }
+
+  /* Indicador de Tarefa Elegante */
+  .day.has-task::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    width: 5px;
+    height: 5px;
+    background: #0056f5;
+    border-radius: 50%;
+  }
+
+  .day.today.has-task::after {
+    background: #38bdf8;
+  }
+
+  /* --- Modal de Edição Fluido --- */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.15);
+    backdrop-filter: blur(12px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal-content {
+    background: #ffffff;
+    width: 90%;
+    max-width: 460px;
+    padding: 32px;
+    border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 24px 50px -12px rgba(15, 23, 42, 0.1);
+    animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes modalPop {
+    from { transform: scale(0.96); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .modal-header {
+    margin-bottom: 20px;
+  }
+
+  .modal-header h2 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+
+  .modal-header p {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  textarea {
+    width: 100%;
+    height: 130px;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    padding: 16px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    resize: none;
+    outline: none;
+    background: #f8fafc;
+    color: #0f172a;
+    transition: all 0.2s ease;
+  }
+
+  textarea:focus {
+    border-color: #0056f5;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(0, 86, 245, 0.06);
+  }
+
+  .modal-footer {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .btn-save {
+    flex: 2;
+    background: #0056f5;
+    color: #ffffff;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-save:hover {
+    background: #0046c7;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 86, 245, 0.2);
+  }
+
+  .btn-close {
+    flex: 1;
+    background: #ffffff;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    padding: 14px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-close:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-color: #cbd5e1;
+  }
+</style>
+</head>
+<body>
+
+<div class="workspace-container">
+  
+  <header class="page-header">
+    <div class="breadcrumb">
+      <a href="inicio">Página Inicial</a> 
+      <i class="hgi hgi-stroke hgi-rounded hgi-arrow-right-01" style="font-size: 12px; color: #94a3b8; margin: 0 2px;"></i> 
+      <span>Agenda</span>
+    </div>
+    <h1>Agenda de Planejamento</h1>
+  </header>
+
+  <div class="content-card">
+    
+    <div class="calendar-header-actions">
+      <div class="month-title-wrapper">
+        <i class="hgi hgi-stroke hgi-rounded hgi-calendar-02"></i>
+        <div class="month-title" id="month-display">Janeiro 2024</div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn-nav" onclick="changeMonth(-1)"><i class="hgi hgi-stroke hgi-rounded hgi-arrow-left-01"></i></button>
+        <button class="btn-nav" onclick="changeMonth(1)"><i class="hgi hgi-stroke hgi-rounded hgi-arrow-right-01"></i></button>
+      </div>
+    </div>
+
+    <div class="weekdays">
+      <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+    </div>
+
+    <div class="days-grid" id="calendar-grid"></div>
+    
+  </div>
+</div>
+
+<div class="modal" id="task-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-title">Plano do Dia</h2>
+      <p>O que será trabalhado nesta data?</p>
+    </div>
+    <textarea id="task-text" placeholder="Ex: Iniciar capítulo 4, aplicar dinâmica de grupo..."></textarea>
+    <div class="modal-footer">
+      <button class="btn-close" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" id="save-task">Salvar Plano</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAs3OTqOeVVzcxlrcM8Th5ObkhtXca69Ac",
+    authDomain: "mindspace-educacao.firebaseapp.com",
+    projectId: "mindspace-educacao",
+    storageBucket: "mindspace-educacao.firebasestorage.app",
+    messagingSenderId: "569394609531",
+    appId: "1:569394609531:web:9ab5ba6bc2181bc5a911de",
+    databaseURL: "https://mindspace-educacao-default-rtdb.firebaseio.com/"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const tasksRef = ref(db, 'agenda');
+
+  let date = new Date();
+  let allTasks = {};
+  let currentSelectedDay = "";
+
+  function renderCalendar() {
+    const grid = document.getElementById('calendar-grid');
+    const monthDisplay = document.getElementById('month-display');
+    grid.innerHTML = '';
+
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    monthDisplay.innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(date);
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDay = new Date(year, month + 1, 0).getDate();
+
+    for (let i = 0; i < firstDay; i++) {
+      const spacer = document.createElement('div');
+      spacer.className = 'day-empty';
+      grid.appendChild(spacer);
+    }
+
+    const today = new Date();
+    for (let i = 1; i <= lastDay; i++) {
+      const dayId = `${year}-${month + 1}-${i}`;
+      const isToday = i === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+      const hasTask = allTasks[dayId] && allTasks[dayId].trim() !== '';
+
+      const dayEl = document.createElement('div');
+      dayEl.className = `day ${isToday ? 'today' : ''} ${hasTask ? 'has-task' : ''}`;
+      dayEl.innerText = i;
+      dayEl.onclick = () => openModal(i, dayId);
+      grid.appendChild(dayEl);
+    }
+  }
+
+  window.changeMonth = (val) => {
+    date.setMonth(date.getMonth() + val);
+    renderCalendar();
+  };
+
+  window.openModal = (num, id) => {
+    currentSelectedDay = id;
+    document.getElementById('modal-title').innerText = `Dia ${num}`;
+    document.getElementById('task-text').value = allTasks[id] || '';
+    document.getElementById('task-modal').style.display = 'flex';
+    setTimeout(() => document.getElementById('task-text').focus(), 50);
+  };
+
+  window.closeModal = () => {
+    document.getElementById('task-modal').style.display = 'none';
+  };
+
+  document.getElementById('save-task').onclick = () => {
+    const text = document.getElementById('task-text').value;
+    update(tasksRef, { [currentSelectedDay]: text }).then(() => closeModal());
+  };
+
+  onValue(tasksRef, (snapshot) => {
+    allTasks = snapshot.val() || {};
+    renderCalendar();
+  });
+
+  window.onclick = (event) => {
+    const modal = document.getElementById('task-modal');
+    if (event.target == modal) closeModal();
+  };
+</script>
+</body>
+</html>

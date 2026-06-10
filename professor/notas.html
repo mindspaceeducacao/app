@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notas | Professor</title>
+
+<link rel="icon" href="../images/logo.svg" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css?v=2">
+
+<style>
+  /* --- Reset e Base Elegante (Design Gemini) --- */
+  * { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: 'Inter', sans-serif; 
+    -webkit-font-smoothing: antialiased; 
+  }
+  
+  body {
+    background-color: #f8fafc;
+    color: #0f172a;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 60px 24px;
+    overflow-y: auto;
+  }
+
+  /* --- Container Centralizado Expandido --- */
+  .workspace-container {
+    width: 100%;
+    max-width: 900px;
+    animation: smoothFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes smoothFadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- Cabeçalho Minimalista --- */
+  .page-header {
+    margin-bottom: 36px;
+  }
+
+   .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+
+  .breadcrumb a {
+    color: #0056f5;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .page-header h1 {
+    font-size: 36px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+
+  .page-header p {
+    font-size: 15px;
+    color: #64748b;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+
+  /* --- Card Principal Premium --- */
+  .content-card {
+    background: #ffffff;
+    border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    padding: 48px;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.02), 0 12px 32px -4px rgba(15, 23, 42, 0.03);
+  }
+
+  /* --- Cabeçalhos de Seção --- */
+  .section-group {
+    margin-bottom: 32px;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .section-title i {
+    font-size: 22px;
+    color: #475569;
+  }
+
+  .section-title h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: -0.3px;
+  }
+
+  .divider {
+    height: 1px;
+    background: #f1f5f9;
+    margin: 40px 0;
+  }
+
+  /* --- Grid List de Atividades --- */
+  .notas-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* --- Bloco de Input de Atividade em Linha --- */
+  .nota-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 16px 20px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .nota-box:hover {
+    border-color: #cbd5e1;
+    background: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px -4px rgba(15, 23, 42, 0.04);
+  }
+
+  .nota-box label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .nota-row {
+    display: flex;
+    gap: 12px;
+  }
+
+  .input-text {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0f172a;
+    background: #ffffff;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .input-nota-val {
+    width: 120px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #0056f5;
+    background: #ffffff;
+    text-align: center;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .nota-box:hover .input-text,
+  .nota-box:hover .input-nota-val {
+    background: #f8fafc;
+  }
+
+  .input-text:focus,
+  .input-nota-val:focus {
+    border-color: #0056f5;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(0, 86, 245, 0.08);
+  }
+
+  .input-text:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #e2e8f0 !important;
+  }
+
+  /* --- Bloco de Resultado da Média (Cores Premium Invertidas para Dark Mode do Box) --- */
+  .media-container {
+    background: linear-gradient(145deg, #0f172a, #1e293b);
+    border: 1px solid #334155;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .media-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .media-info i {
+    font-size: 28px;
+    color: #38bdf8;
+  }
+
+  .media-info div h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #f8fafc;
+  }
+
+  .media-info div p {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 500;
+  }
+
+  .input-media-final {
+    width: 120px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #334155;
+    background: #ffffff;
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    text-align: center;
+    outline: none;
+  }
+
+  /* --- Texto de Informação Inferior --- */
+  .info-text {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 16px;
+  }
+
+  .info-text i {
+    font-size: 16px;
+    color: #0056f5;
+  }
+</style>
+</head>
+<body>
+
+<div class="workspace-container">
+  
+  <header class="page-header">
+    <div class="breadcrumb">
+      <a href="inicio">Página Inicial</a> 
+      <i class="hgi hgi-stroke hgi-rounded hgi-arrow-right-01" style="font-size: 12px; color: #94a3b8; margin: 0 2px;"></i> 
+      <span>Notas</span>
+    </div>
+    <h1 id="titulo-pagina">Lançamento de Notas</h1>
+    <p id="subtitulo-materia">Disciplina: Carregando...</p>
+  </header>
+
+  <div class="content-card">
+
+    <div class="section-group">
+      <div class="section-title">
+        <i class="hgi hgi-stroke hgi-rounded hgi-property-card-02"></i>
+        <h3>Atividades e Avaliações</h3>
+      </div>
+      
+      <div class="notas-stack">
+        <div class="nota-box">
+          <label>Atividade 1 <span style="opacity:.6">(Max: 20.0)</span></label>
+          <div class="nota-row">
+            <input type="text" class="input-text salvavel" id="t1" placeholder="Nome da atividade">
+            <input type="number" step="1.0" class="input-nota-val val salvavel" id="n1" data-max="20.0" placeholder="0.0">
+          </div>
+        </div>
+        
+        <div class="nota-box">
+          <label>Atividade 2 <span style="opacity:.6">(Max: 20.0)</span></label>
+          <div class="nota-row">
+            <input type="text" class="input-text salvavel" id="t2" placeholder="Nome da atividade">
+            <input type="number" step="1.0" class="input-nota-val val salvavel" id="n2" data-max="20.0" placeholder="0.0">
+          </div>
+        </div>
+
+        <div class="nota-box">
+          <label>Atividade 3 <span style="opacity:.6">(Max: 20.0)</span></label>
+          <div class="nota-row">
+            <input type="text" class="input-text salvavel" id="t3" placeholder="Nome da atividade">
+            <input type="number" step="1.0" class="input-nota-val val salvavel" id="n3" data-max="20.0" placeholder="0.0">
+          </div>
+        </div>
+
+        <div class="nota-box">
+          <label>Outros <span style="opacity:.6">(Max: 40.0)</span></label>
+          <div class="nota-row">
+            <input type="text" class="input-text salvavel" id="titulo_outros" placeholder="Participação, etc">
+            <input type="number" step="1.0" class="input-nota-val val salvavel" id="n_outros" data-max="40.0" placeholder="0.0">
+          </div>
+        </div>
+
+        <div class="nota-box">
+          <label>Avaliação Final <span style="opacity:.6">(Max: 100.0)</span></label>
+          <div class="nota-row">
+            <input type="text" class="input-text" value="Avaliação Acadêmica Diagnóstica" disabled>
+            <input type="number" step="1.0" class="input-nota-val val salvavel" id="n_prova" data-max="100.0" placeholder="0.0">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-group">
+      <div class="section-title">
+        <i class="hgi hgi-stroke hgi-rounded hgi-analytics-01"></i>
+        <h3>Desempenho Geral</h3>
+      </div>
+
+      <div class="media-container">
+        <div class="media-info">
+          <i class="hgi hgi-stroke hgi-rounded hgi-star"></i>
+          <div>
+            <h4>Média Final Alcançada</h4>
+            <p>Controle de rendimento calculado dinamicamente.</p>
+          </div>
+        </div>
+        <input type="text" id="media_final" class="input-media-final" readonly value="0.0">
+      </div>
+
+      <p class="info-text">
+        <i class="hgi hgi-stroke hgi-rounded hgi-cloud-saving-done"></i>
+        Dados salvos automaticamente conforme você digita.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAs3OTqOeVVzcxlrcM8Th5ObkhtXca69Ac",
+    authDomain: "mindspace-educacao.firebaseapp.com",
+    projectId: "mindspace-educacao",
+    storageBucket: "mindspace-educacao.firebasestorage.app",
+    messagingSenderId: "569394609531",
+    appId: "1:569394609531:web:9ab5ba6bc2181bc5a911de",
+    databaseURL: "https://mindspace-educacao-default-rtdb.firebaseio.com/"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const materiaAtiva = sessionStorage.getItem('materia') || "Artes";
+
+  const configMaterias = {
+    "Ciências":   { db: "cien" },
+    "Português":  { db: "port" },
+    "Matemática": { db: "mat"  },
+    "Artes":      { db: "artes" }
+  };
+
+  const usuarioOriginal = sessionStorage.getItem('usuario') || "hadassa";
+  const usuarioFull = usuarioOriginal.toLowerCase().replace(/\./g, '').trim(); 
+
+  const turmaLimpa = sessionStorage.getItem('turma_limpa') || "1ano";
+
+  const materiaOriginal = sessionStorage.getItem('materia') || "Artes";
+  const materiaLimpa = materiaOriginal.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+
+
+  const nome = sessionStorage.getItem('nome') || "Hadassa Burbon";
+  document.getElementById('subtitulo-materia').innerText = `${nome}, gerencie as notas de ${materiaAtiva}.`;
+
+  const dbRef = ref(db, `${usuarioFull}/${turmaLimpa}/${materiaLimpa}`);
+  const campos = document.querySelectorAll('.salvavel');
+  const camposNotas = document.querySelectorAll('.val');
+  const displayMedia = document.getElementById('media_final');
+
+  function calcularMedia() { 
+    let total = 0; 
+    camposNotas.forEach(nota => { 
+        let valor = parseFloat(nota.value) || 0; 
+        let maximo = parseFloat(nota.getAttribute('data-max')); 
+        if (valor > maximo) { 
+            valor = maximo; 
+            nota.value = maximo; 
+        } 
+        total += valor;
+    }); 
+    displayMedia.value = (total / 2).toFixed(1); 
+  }
+
+  onValue(dbRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      campos.forEach(campo => {
+        if (data[campo.id] !== undefined) campo.value = data[campo.id];
+      });
+      calcularMedia();
+    }
+  });
+
+  campos.forEach(campo => {
+    campo.addEventListener('input', () => {
+      if (campo.classList.contains('val')) calcularMedia();
+      update(dbRef, { [campo.id]: campo.value });
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Início | Professor</title>
+    
+    <link rel="icon" href="../images/logo.svg" type="image/png">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css?v=2">
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <style>
+        /* --- Reset e Configurações Globais (Idêntico ao inicio.html) --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: #f3f7fa; 
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- Container da Sidebar --- */
+        .sidebar {
+            width: 260px;
+            background-color: #ffffff;
+            height: 100vh;
+            padding: 32px 16px 24px 24px; 
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 32px;
+            padding-left: 8px;
+            height: 28px;
+        }
+
+        .brand img {
+            height: 100%;
+        }
+
+        .menu-nav {
+            flex-grow: 1;
+        }
+
+        .menu-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #64748b; 
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600; 
+            letter-spacing: -0.2px;
+            border-radius: 12px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .menu-item a .hgi-stroke {
+            font-size: 20px;
+            color: #64748b;
+            transition: transform 0.25s ease;
+        }
+
+        .menu-item a:active {
+            transform: scale(0.97);
+        }
+
+        .menu-item.active a {
+            background-color: #e6f0ff; 
+            color: #0056f5; 
+        }
+
+        .menu-item.active a .hgi-stroke {
+            color: #0056f5;
+        }
+
+        .menu-item a:hover:not(.active a) {
+            background-color: #f8fafc;
+            color: #1e293b;
+            padding-left: 20px;
+        }
+        
+        .menu-item a:hover:not(.active a) .hgi-stroke {
+            color: #1e293b;
+            transform: scale(1.1);
+        }
+
+        .sidebar-footer {
+            padding: 16px 8px 0 8px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        /* --- CONTAINER DO CONTEÚDO PRINCIPAL --- */
+        .main-content {
+            flex: 1;
+            padding: 32px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            overflow-y: auto;
+            height: 100vh;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Grid Superior Lado a Lado */
+        .profile-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            width: 100%;
+        }
+
+        /* Base dos Cards */
+        .main-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .main-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.05);
+        }
+
+        .blue-banner {
+            height: 70px;
+            background: linear-gradient(135deg, #4b108e 10%, #0056f5 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0.08;
+            background-image: radial-gradient(circle at 80% 10%, transparent 100px, #ffffff 100px, #ffffff 102px, transparent 102px),
+                              radial-gradient(circle at 80% 10%, transparent 140px, #ffffff 140px, #ffffff 142px, transparent 142px);
+        }
+
+        .profile-body {
+            padding: 0 24px 16px 24px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            margin-top: -32px; 
+        }
+
+        .avatar-container {
+            width: 64px;
+            height: 64px;
+            background-color: #dedbff; /* Verde suave para o professor */
+            border: 4px solid #ffffff; 
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .main-card:hover .avatar-container {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .avatar-letter {
+            font-size: 22px;
+            font-weight: 700;
+            color: #5c14af;
+        }
+
+        .student-info .student-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: -0.3px;
+            margin-bottom: 4px;
+        }
+
+        .badge-role {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #47256f;
+            background-color: #f6f1f9;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .school-text {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        /* Progresso da Digitação / Configurações da Rota */
+        .progress-section {
+            border-top: 1px solid #f1f5f9;
+            padding: 16px 24px 24px 24px;
+            margin-top: auto;               
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .progress-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .progress-container-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bar-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: 70%;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 6px;
+            background-color: #e2e8f0;
+            border-radius: 3px;
+            margin: 0 16px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background-color: #5c14af;
+            border-radius: 3px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .bar-percentage {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        /* --- CARD DE LANÇAMENTO DE NOTAS --- */
+        .main-card.grades-card {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .grades-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .grades-header h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .grades-header .hgi-stroke {
+            font-size: 20px;
+            color: #64748b;
+            transition: transform 0.3s ease;
+        }
+
+        .main-card.grades-card:hover .grades-header .hgi-stroke {
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        .subjects-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+            justify-content: space-between; 
+        }
+
+        .subject-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+
+        .subject-item:hover {
+            transform: translateX(4px);
+            border-color: #cbd5e1;
+        }
+
+        .subject-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .subject-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .subject-status {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .subject-score {
+            font-size: 14px;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        /* --- SEÇÃO DE REGISTRO DE CONTEÚDOS --- */
+        .agenda-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .agenda-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.05);
+        }
+
+        .agenda-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .agenda-title-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1e293b;
+        }
+
+        .agenda-title-box h3 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .agenda-title-box .hgi-stroke {
+            font-size: 20px;
+            color: #64748b;
+        }
+
+        .btn-full-calendar {
+            background-color: transparent;
+            border: 1px solid #e2e8f0;
+            color: #0056f5;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-full-calendar:hover {
+            background-color: #f0f7ff;
+            border-color: #bfdbfe;
+            transform: translateY(-1px);
+        }
+
+        .events-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .events-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 4px;
+        }
+
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 18px;
+            position: relative;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .event-item:hover {
+            transform: translateX(2px);
+            border-color: #cbd5e1;
+        }
+
+        .event-details {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .item-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .date-tag {
+            font-size: 11px;
+            font-weight: 700;
+            color: #ffffff;
+            background-color: #0056f5;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .item-hora {
+            font-size: 12px;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .tag-pill {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            color: #1e293b;
+        }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-delete:hover {
+            color: #ef4444;
+            background-color: #fef2f2;
+        }
+
+        .no-events-box {
+            padding: 24px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            background-color: #f8fafc;
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand">
+            <img src="../images/mindspace.svg" alt="MindSpace">
+        </div>
+
+        <nav class="menu-nav">
+            <ul class="menu-list">
+                <li class="menu-item active">
+                    <a href="">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-dashboard-square-02"></i>
+                        <span>Início</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="registros">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-file-02"></i>
+                        <span>Registros</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="notas">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-folder-check"></i>
+                        <span>Notas</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="biblioteca-recursos">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-package"></i>
+                        <span>Biblioteca de Recursos</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="agenda">
+                        <i class="hgi hgi-stroke hgi-rounded hgi-calendar-03"></i>
+                        <span>Agenda</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">© 2026 MindSpace</div>
+    </aside>
+    
+    <main class="main-content">
+        
+        <div class="profile-row">
+            <div class="main-card">
+                <div class="blue-banner">
+                    <div class="banner-lines"></div>
+                </div>
+                
+                <div class="profile-body">
+                    <div class="avatar-container">
+                        <div class="avatar-letter" id="prof-avatar">P</div>
+                    </div>
+                    
+                    <div class="student-info">
+                        <h2 class="student-name" id="prof-name">Carregando...</h2>
+                        <span class="badge-role">Professor</span>
+                        <p class="school-text" id="prof-materia">Matéria: —</p>
+                        <p class="school-text" id="prof-turma">Turma: —</p>
+                    </div>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <span class="progress-title">Progresso de Lançamento</span>
+                    </div>
+                    
+                    <div class="progress-container-box">
+                        <span class="bar-label" id="label-rota-banco">Média: —</span>
+                        <div class="bar-track">
+                            <div class="bar-fill" id="progresso-bar-fill" style="width: 0%;"></div>
+                        </div>
+                        <span class="bar-percentage" id="progresso-bar-percent">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-card grades-card">
+                <div class="grades-header">
+                    <h3>Notas Avaliativas da Turma</h3>
+                    <i class="hgi hgi-stroke hgi-rounded hgi-analytics-01"></i>
+                </div>
+                
+                <div class="subjects-list">
+                    <div class="subject-item">
+                        <div class="subject-info">
+                            <span class="subject-name">Atividade 1</span>
+                            <span class="subject-status" id="status-n1">Pendente</span>
+                        </div>
+                        <span class="subject-score" id="val-n1">—</span>
+                    </div>
+
+                    <div class="subject-item">
+                        <div class="subject-info">
+                            <span class="subject-name">Atividade 2</span>
+                            <span class="subject-status" id="status-n2">Pendente</span>
+                        </div>
+                        <span class="subject-score" id="val-n2">—</span>
+                    </div>
+
+                    <div class="subject-item">
+                        <div class="subject-info">
+                            <span class="subject-name">Atividade 3</span>
+                            <span class="subject-status" id="status-n3">Pendente</span>
+                        </div>
+                        <span class="subject-score" id="val-n3">—</span>
+                    </div>
+
+                    <div class="subject-item">
+                        <div class="subject-info">
+                            <span class="subject-name" id="label-outros">Outros</span>
+                            <span class="subject-status" id="status-n_outros">Pendente</span>
+                        </div>
+                        <span class="subject-score" id="val-n_outros">—</span>
+                    </div>
+
+                    <div class="subject-item" style="border-left: 3px solid #5c14af;">
+                        <div class="subject-info">
+                            <span class="subject-name" style="color: #5c14af; font-weight: 700;">Avaliação Final</span>
+                            <span class="subject-status" id="status-n_prova">Pendente</span>
+                        </div>
+                        <span class="subject-score" id="val-n_prova" style="color: #5c14af; font-weight: 700;">—</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="agenda-card">
+            <div class="agenda-header">
+                <div class="agenda-title-box">
+                    <i class="hgi hgi-stroke hgi-rounded hgi-notebook-01"></i>
+                    <h3>Aula de Hoje / Conteúdos Trabalhados</h3>
+                </div>
+                <button class="btn-full-calendar" id="btn-toggle-view">
+                    <i class="hgi hgi-stroke hgi-rounded hgi-border-full"></i>
+                    Ver histórico completo
+                </button>
+            </div>
+
+            <div class="events-container" id="container-aula-hoje">
+                <h4 class="events-section-title">Conteúdo de Hoje</h4>
+                <div class="events-list" id="aula-hoje-container"></div>
+            </div>
+
+            <div class="events-container" id="container-historico" style="display: none;">
+                <h4 class="events-section-title">Histórico de Registros</h4>
+                <div class="events-list" id="historico-completo-container"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 1. Captura obrigatória das chaves do sessionStorage
+            const sessionUsuario = sessionStorage.getItem('usuario') || "hadassa";
+            const sessionNome    = sessionStorage.getItem('nome') || "Hadassa";
+            const sessionTurma   = sessionStorage.getItem('turma') || "1° Ano do Ensino Fundamental";
+            const turmaLimpa = sessionStorage.getItem('turma_limpa') || "1ano";
+            const sessionMateria = sessionStorage.getItem('materia') || "Artes";
+
+            // 2. Tratamento e higienização da string de Turma por Regex
+
+            const usuarioLimpo = sessionUsuario.toLowerCase().replace(/\./g, '').replace(/[^a-z0-9]/g, "").replace(/(artes|port|cien|mat)$/, "");
+const materiaLimpa = sessionMateria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+
+            // Nova Rota Estruturada Rigorosa
+            const rotaEstruturada = `${usuarioLimpo}/${materiaLimpa}`;
+            
+            // Atualiza os componentes do Widget do Professor na Tela
+            document.getElementById('prof-name').innerText = sessionNome;
+            document.getElementById('prof-materia').innerText = `Matéria: ${sessionMateria}`;
+            document.getElementById('prof-turma').innerText = `Turma: ${sessionTurma}`;
+            document.getElementById('prof-avatar').innerText = sessionNome.charAt(0).toUpperCase();
+
+            // --- CONFIGURAÇÃO DO FIREBASE ---
+            const firebaseConfig = {
+                apiKey: "AIzaSyAs3OTqOeVVzcxlrcM8Th5ObkhtXca69Ac",
+                authDomain: "mindspace-educacao.firebaseapp.com",
+                projectId: "mindspace-educacao",
+                storageBucket: "mindspace-educacao.firebasestorage.app",
+                messagingSenderId: "569394609531",
+                appId: "1:569394609531:web:9ab5ba6bc2181bc5a911de",
+                databaseURL: "https://mindspace-educacao-default-rtdb.firebaseio.com/"
+            };
+
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            const database = firebase.database();
+
+// Aponta diretamente para a estrutura: dlucca/1ano/matemati
+
+// Coloca os conteúdos dentro da subpasta correspondente à disciplina e turma
+
+// COLOQUE estas linhas atualizadas:
+const dbRef = database.ref(`${usuarioLimpo}/${turmaLimpa}/${materiaLimpa}`);
+const conteudoTrabalhadoRef = database.ref(`${usuarioLimpo}/${turmaLimpa}/${materiaLimpa}/trabalhados`);
+
+            // Escuta do Lançamento de Notas e Cálculo da Soma das Notas
+            dbRef.on('value', snapshot => {
+                const data = snapshot.val();
+                let preenchidos = 0;
+                let somaNotas = 0; 
+                const keys = ['n1', 'n2', 'n3', 'n_outros', 'n_prova'];
+
+                keys.forEach(k => {
+                    const valEl = document.getElementById('val-' + k);
+                    const st = document.getElementById('status-' + k);
+                    if (!valEl || !st) return;
+
+                    if (data && data[k] !== undefined && data[k] !== "") {
+                        preenchidos++;
+                        somaNotas += parseFloat(data[k]) || 0; 
+                        
+                        valEl.innerText = data[k];
+                        st.innerText = "Lançado";
+                        st.style.color = "#10b981";
+                    } else {
+                        valEl.innerText = "—";
+                        st.innerText = "Pendente";
+                        st.style.color = "#64748b";
+                    }
+                });
+
+                if (data && data.titulo_outros && document.getElementById('label-outros')) {
+                    document.getElementById('label-outros').innerText = data.titulo_outros;
+                }
+
+                // Injeta a soma das notas formatada com uma casa decimal no widget
+                const labelRota = document.getElementById('label-rota-banco');
+                if (labelRota) {
+                    const resultadoFinal = somaNotas / 2;
+                    labelRota.innerText = `Média: ${resultadoFinal.toFixed(1)}`;
+                }
+
+                // Atualiza a barra de carregamento do Widget com base no progresso de preenchimento
+                const progressoPorcentagem = preenchidos * 20;
+                const barFill = document.getElementById('progresso-bar-fill');
+                if (barFill) barFill.style.width = `${progressoPorcentagem}%`;
+                
+                const barPercent = document.getElementById('progresso-bar-percent');
+                if (barPercent) barPercent.innerText = `${progressoPorcentagem}%`;
+            });
+
+            // Gerenciamento e Escuta de Conteúdos de Aula
+           window.removerConteudo = function(id) {
+    if (confirm("Deseja apagar este registro de aula?")) {
+        database.ref(`${usuarioLimpo}/${turmaLimpa}/${materiaLimpa}/trabalhados/${id}`).remove();
+    }
+};
+
+            conteudoTrabalhadoRef.on('value', snapshot => {
+                const dashBox = document.getElementById('aula-hoje-container');
+                const histBox = document.getElementById('historico-completo-container');
+                if (!dashBox || !histBox) return;
+
+                dashBox.innerHTML = ''; 
+                histBox.innerHTML = '';
+                const dados = snapshot.val();
+                const hoje = new Date().toLocaleDateString('pt-BR');
+
+                if (!dados) {
+                    const empty = '<div class="no-events-box">Nenhum conteúdo registrado.</div>';
+                    dashBox.innerHTML = empty; 
+                    histBox.innerHTML = empty;
+                    return;
+                }
+
+                const lista = Object.entries(dados).reverse();
+                lista.forEach(([id, item]) => {
+                    histBox.appendChild(createItemHTML(id, item));
+                });
+
+                const aulaHoje = lista.find(([id, item]) => item.data === hoje);
+                if (aulaHoje) {
+                    dashBox.appendChild(createItemHTML(aulaHoje[0], aulaHoje[1]));
+                } else {
+                    dashBox.innerHTML = '<div class="no-events-box">Nenhuma aula registrada para o dia de hoje.</div>';
+                }
+            });
+
+            function createItemHTML(id, item) {
+                const div = document.createElement('div');
+                div.className = 'event-item';
+                const tags = item.itens.map(t => `<span class="tag-pill">${t}</span>`).join('');
+                div.innerHTML = `
+                    <div class="event-details">
+                        <div class="item-meta">
+                            <span class="date-tag">${item.data}</span>
+                            <span class="item-hora">às ${item.hora}</span>
+                        </div>
+                        <div class="tags-container">${tags}</div>
+                    </div>
+                    <button class="btn-delete" onclick="window.removerConteudo('${id}')">
+                        <i class="hgi hgi-stroke hgi-delete-02"></i>
+                    </button>
+                `;
+                return div;
+            }
+
+            // Alternar Visualização entre Aula de Hoje e Histórico Completo
+            const btnToggle = document.getElementById('btn-toggle-view');
+            const containerHoje = document.getElementById('container-aula-hoje');
+            const containerHist = document.getElementById('container-historico');
+
+            btnToggle.addEventListener('click', function() {
+                if (containerHist.style.display === 'none') {
+                    containerHist.style.display = 'flex';
+                    containerHoje.style.display = 'none';
+                    btnToggle.innerHTML = '<i class="hgi hgi-stroke hgi-calendar-02"></i> Ver aula de hoje';
+                } else {
+                    containerHist.style.display = 'none';
+                    containerHoje.style.display = 'flex';
+                    btnToggle.innerHTML = '<i class="hgi hgi-stroke hgi-border-full"></i> Ver histórico completo';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
