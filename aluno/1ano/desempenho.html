@@ -449,16 +449,16 @@
                     <i class="hgi hgi-stroke hgi-rounded hgi-arrow-down-01 arrow-icon"></i>
                 </div>
                 <div class="custom-options-box">
-                    <div class="custom-option selected" data-value="dlucca/port" data-icon="hgi-book-02">
+                    <div class="custom-option selected" data-value="dlucca/1ano/portugues" data-icon="hgi-book-02">
                         <i class="hgi hgi-stroke hgi-rounded hgi-book-02"></i> Língua Portuguesa
                     </div>
-                    <div class="custom-option" data-value="dlucca/mat" data-icon="hgi-calculator">
+                    <div class="custom-option" data-value="dlucca/1ano/matematica" data-icon="hgi-calculator">
                         <i class="hgi hgi-stroke hgi-rounded hgi-calculator"></i> Matemática
                     </div>
-                    <div class="custom-option" data-value="hadassa/cien" data-icon="hgi-test-tube-01">
+                    <div class="custom-option" data-value="hadassa/1ano/ciencias" data-icon="hgi-test-tube-01">
                         <i class="hgi hgi-stroke hgi-rounded hgi-test-tube-01"></i> Ciências
                     </div>
-                    <div class="custom-option" data-value="hadassa/artes" data-icon="hgi-paint-board">
+                    <div class="custom-option" data-value="hadassa/1ano/artes" data-icon="hgi-paint-board">
                         <i class="hgi hgi-stroke hgi-rounded hgi-paint-board"></i> Artes
                     </div>
                 </div>
@@ -494,7 +494,7 @@
         'hadassa/1ano/artes': {}
     };
 
-    let selectedPath = "dlucca/port";
+    let selectedPath = "dlucca/1ano/portugues";
 
     // Cálculo exato utilizando os IDs reais extraídos do notas.html (n1, n2, n3, n_outros, n_prova)
     function calcularNotaFinal(data) {
@@ -569,10 +569,10 @@
     }
 
     const caminhosMaterias = [
-        { path: 'dlucca/port', elementId: 'score-port' },
-        { path: 'dlucca/mat', elementId: 'score-mat' },
-        { path: 'hadassa/cien', elementId: 'score-cien' },
-        { path: 'hadassa/artes', elementId: 'score-artes' }
+        { path: 'dlucca/1ano/portugues', elementId: 'score-port' },
+        { path: 'dlucca/1ano/matematica', elementId: 'score-mat' },
+        { path: 'hadassa/1ano/ciencias', elementId: 'score-cien' },
+        { path: 'hadassa/1ano/artes', elementId: 'score-artes' }
     ];
 
     caminhosMaterias.forEach(item => {
@@ -626,7 +626,7 @@
     });
 
     window.addEventListener('DOMContentLoaded', () => {
-        renderDetalhamentoMateria('dlucca/port');
+        renderDetalhamentoMateria('dlucca/1ano/portugues');
     });
 </script>
 </body>
