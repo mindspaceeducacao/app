@@ -359,8 +359,8 @@
 
     // Credenciais dos professores coletadas de professor.html
     const professorAccounts = {
-        "hadassa.1ano": { pass: "hbmind26", turma:"1° Ano do Ensino Fundamental", nome:"Hadassa Burbon", turmacurto:"1ano" },
-        "dlucca.1ano":   { pass: "dlmind26", turma:"1° Ano do Ensino Fundamental", nome:"Daniel Lucca", turmacurto:"1ano" },
+        "hadassa.1ano": { pass: "hbmind26", turma:"1° Ano do Ensino Fundamental", nome:"Hadassa Burbon", turmacurto:"1ano", usuario:"hadassa" },
+        "dlucca.1ano":   { pass: "dlmind26", turma:"1° Ano do Ensino Fundamental", nome:"Daniel Lucca", turmacurto:"1ano", usuario:"dlucca" },
     };
 
     // Função para alternar entre as abas de perfis
@@ -436,7 +436,7 @@
             if (professorAccounts[user] && professorAccounts[user].pass === pass) {
                 // Guarda os dados na sessão assim como o seu professor.html antigo fazia
                 sessionStorage.setItem('logado', 'true');
-                sessionStorage.setItem('usuario', user);
+                sessionStorage.setItem('usuario', professorAcounts[user].usuario);
                 sessionStorage.setItem('nome', professorAccounts[user].nome);
                 sessionStorage.setItem('turma', professorAccounts[user].turma);
                 sessionStorage.setItem('turmacurto', professorAccounts[user].turmacurto);
