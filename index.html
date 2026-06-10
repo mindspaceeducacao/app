@@ -436,7 +436,7 @@
             if (professorAccounts[user] && professorAccounts[user].pass === pass) {
                 // Guarda os dados na sessão assim como o seu professor.html antigo fazia
                 sessionStorage.setItem('logado', 'true');
-                sessionStorage.setItem('usuario', professorAcounts[user].usuario);
+                sessionStorage.setItem('usuario', professorAccounts[user].usuario);
                 sessionStorage.setItem('nome', professorAccounts[user].nome);
                 sessionStorage.setItem('turma', professorAccounts[user].turma);
                 sessionStorage.setItem('turmacurto', professorAccounts[user].turmacurto);
