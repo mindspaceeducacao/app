@@ -81,7 +81,7 @@ const PDFViewer = {
       AppState.fileName = this.extractFileName(url);
       document.getElementById("docTitle").textContent = AppState.fileName;
       document.getElementById("docTitle").title = AppState.fileName;
-      document.title = AppState.fileName + " — PDF Viewer";
+      document.title = AppState.fileName.replace(/\.pdf$/i, "");
 
       progressBar.style.width = "100%";
 
