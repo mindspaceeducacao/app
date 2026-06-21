@@ -17,7 +17,7 @@
     var slug = parts.pop() || "";
     var baseDir = "/" + parts.join("/");
 
-    window.__PDF_OVERRIDE_URL__ = baseDir + "/pdf/" + decodeURIComponent(slug) + ".pdf";
+    window.__PDF_OVERRIDE_URL__ = baseDir + "/" + decodeURIComponent(slug) + ".pdf";
     window.__PDF_OVERRIDE_NAME__ = decodeURIComponent(slug) + ".pdf";
 
     // Faz todos os caminhos relativos (css/js/pdfjs) apontarem para a
