@@ -11,7 +11,7 @@
 
   (function () {
     // Descobre o "slug" do PDF a partir da URL limpa
-    // Ex: /app/aluno/1ano/estante-de-conteudos/Livro-Portugues
+    // Ex: /app/aluno/1ano/estante-de-conteudo/Livro-Portugues
     var path = window.location.pathname.replace(/\/$/, "");
     var parts = path.split("/").filter(Boolean);
     var slug = parts.pop() || "";
