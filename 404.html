@@ -14,11 +14,15 @@
     // Ex: /app/aluno/1ano/estante-de-conteudos/Livro-Portugues
     var path = window.location.pathname.replace(/\/$/, "");
     var parts = path.split("/").filter(Boolean);
-    var slug = parts.pop() || "";
+    var rawSlug = parts.pop() || "";
     var baseDir = "/" + parts.join("/");
+    var decodedName = decodeURIComponent(rawSlug);
 
-    window.__PDF_OVERRIDE_URL__ = baseDir + "/" + decodeURIComponent(slug) + ".pdf";
-    window.__PDF_OVERRIDE_NAME__ = decodeURIComponent(slug) + ".pdf";
+    // URL usada para BUSCAR o arquivo: sempre corretamente codificada
+    // (resolve o problema de espaços/acentos não sendo encontrados).
+    window.__PDF_OVERRIDE_URL__ = baseDir + "/" + encodeURIComponent(decodedName) + ".pdf";
+    // Nome usado para EXIBIR (título da aba, nome do documento): sem codificação.
+    window.__PDF_OVERRIDE_NAME__ = decodedName + ".pdf";
 
     // Faz todos os caminhos relativos (css/js/pdfjs) apontarem para a
     // pasta do visualizador compartilhado, não para a URL "falsa" atual.
