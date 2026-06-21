@@ -61,6 +61,9 @@ const AppState = {
   storageKeyPrefix: "pdfviewer:",
 };
 
+// Título da aba do navegador = nome do PDF (sem a extensão .pdf)
+document.title = AppState.fileName.replace(/\.pdf$/i, "");
+
 /**
  * Pequeno barramento de eventos (pub/sub) para comunicação entre módulos
  * sem dependências externas e sem acoplamento direto entre arquivos.
