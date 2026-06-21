@@ -2,6 +2,29 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
+<script>
+  /* ============================================================
+     CONFIGURAÇÃO — ajuste se o nome do repositório mudar
+     ============================================================ */
+  var SITE_BASE = "/app";                 // raiz do site no GitHub Pages
+  var VIEWER_BASE = SITE_BASE + "/viewer"; // pasta com o visualizador compartilhado
+
+  (function () {
+    // Descobre o "slug" do PDF a partir da URL limpa
+    // Ex: /app/aluno/1ano/estante-de-conteudos/Livro-Portugues
+    var path = window.location.pathname.replace(/\/$/, "");
+    var parts = path.split("/").filter(Boolean);
+    var slug = parts.pop() || "";
+    var baseDir = "/" + parts.join("/");
+
+    window.__PDF_OVERRIDE_URL__ = baseDir + "/pdf/" + decodeURIComponent(slug) + ".pdf";
+    window.__PDF_OVERRIDE_NAME__ = decodeURIComponent(slug) + ".pdf";
+
+    // Faz todos os caminhos relativos (css/js/pdfjs) apontarem para a
+    // pasta do visualizador compartilhado, não para a URL "falsa" atual.
+    document.write('<base href="' + VIEWER_BASE + '/">');
+  })();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>PDF Viewer</title>
 <meta name="description" content="Visualizador de PDF moderno, rápido e responsivo." />

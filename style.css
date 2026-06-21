@@ -1,0 +1,1128 @@
+/* ==========================================================================
+   PDF VIEWER — STYLE SHEET
+   Design inspirado em Google Drive / Canva / Adobe Acrobat Web / Notion
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS (CSS VARIABLES)
+   -------------------------------------------------------------------------- */
+:root {
+  /* Paleta - Tema claro */
+  --color-bg: #f4f5f7;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f8f9fb;
+  --color-border: #e3e5ea;
+  --color-border-strong: #d3d6dd;
+
+  --color-text-primary: #1a1d24;
+  --color-text-secondary: #5f6368;
+  --color-text-tertiary: #8a8f98;
+
+  --color-accent: #1a56db;
+  --color-accent-hover: #1646b8;
+  --color-accent-soft: rgba(26, 86, 219, 0.1);
+  --color-accent-soft-strong: rgba(26, 86, 219, 0.18);
+
+  --color-danger: #d93025;
+  --color-success: #18794e;
+
+  --color-highlight: #ffd54a;
+  --color-highlight-active: #ff9d2e;
+
+  --color-page-bg: #ffffff;
+  --color-canvas-shadow: rgba(20, 24, 35, 0.16);
+  --color-canvas-border: rgba(20, 24, 35, 0.06);
+
+  --color-scrollbar-track: transparent;
+  --color-scrollbar-thumb: rgba(60, 64, 73, 0.18);
+  --color-scrollbar-thumb-hover: rgba(60, 64, 73, 0.32);
+
+  --color-overlay: rgba(20, 22, 30, 0.55);
+
+  /* Tipografia */
+  --font-family: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-size-xs: 11.5px;
+  --font-size-sm: 13px;
+  --font-size-base: 14px;
+  --font-size-md: 15px;
+  --font-size-lg: 17px;
+
+  /* Espaçamento */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  /* Raios */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 999px;
+
+  /* Sombras */
+  --shadow-xs: 0 1px 2px rgba(20, 24, 35, 0.06);
+  --shadow-sm: 0 2px 6px rgba(20, 24, 35, 0.08);
+  --shadow-md: 0 6px 20px rgba(20, 24, 35, 0.10);
+  --shadow-lg: 0 12px 32px rgba(20, 24, 35, 0.16);
+  --shadow-focus: 0 0 0 3px var(--color-accent-soft-strong);
+
+  /* Transições */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 340ms;
+
+  /* Layout */
+  --topbar-h: 56px;
+  --search-h: 48px;
+  --sidebar-w: 232px;
+  --sidebar-w-collapsed: 0px;
+}
+
+/* Tema escuro */
+[data-theme="dark"] {
+  --color-bg: #15171c;
+  --color-surface: #1d2027;
+  --color-surface-alt: #20232b;
+  --color-border: #2c2f38;
+  --color-border-strong: #3a3e49;
+
+  --color-text-primary: #eceef1;
+  --color-text-secondary: #aeb2bb;
+  --color-text-tertiary: #767b86;
+
+  --color-accent: #5b8def;
+  --color-accent-hover: #7aa2f3;
+  --color-accent-soft: rgba(91, 141, 239, 0.16);
+  --color-accent-soft-strong: rgba(91, 141, 239, 0.28);
+
+  --color-highlight: #b88a2e;
+  --color-highlight-active: #d99f1f;
+
+  --color-page-bg: #2a2d35;
+  --color-canvas-shadow: rgba(0, 0, 0, 0.45);
+  --color-canvas-border: rgba(255, 255, 255, 0.05);
+
+  --color-scrollbar-thumb: rgba(255, 255, 255, 0.14);
+  --color-scrollbar-thumb-hover: rgba(255, 255, 255, 0.26);
+
+  --color-overlay: rgba(8, 9, 12, 0.7);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   2. RESET
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  transition: background-color var(--dur-base) var(--ease-standard);
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+input {
+  font-family: inherit;
+  color: inherit;
+}
+
+ul, ol { list-style: none; margin: 0; padding: 0; }
+
+svg { display: block; }
+
+/* --------------------------------------------------------------------------
+   3. SCROLLBAR PERSONALIZADA
+   -------------------------------------------------------------------------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--color-scrollbar-track);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-scrollbar-thumb);
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-scrollbar-thumb-hover);
+  background-clip: content-box;
+}
+
+/* --------------------------------------------------------------------------
+   4. APP SHELL
+   -------------------------------------------------------------------------- */
+#app {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   5. TOPBAR
+   -------------------------------------------------------------------------- */
+.topbar {
+  height: var(--topbar-h);
+  min-height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 0 var(--space-3);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xs);
+  position: relative;
+  z-index: 40;
+}
+
+.topbar__group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.topbar__group--left {
+  flex: 1 1 200px;
+  min-width: 120px;
+}
+
+.topbar__group--center {
+  flex: 0 1 auto;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.topbar__group--right {
+  flex: 1 1 200px;
+  justify-content: flex-end;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--color-border-strong);
+  margin: 0 var(--space-1);
+  flex-shrink: 0;
+}
+
+/* --- Identidade do documento --- */
+.doc-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: 6px var(--space-2);
+  border-radius: var(--radius-md);
+  transition: background var(--dur-fast) var(--ease-standard);
+}
+
+.doc-identity:hover {
+  background: var(--color-surface-alt);
+}
+
+.doc-identity__icon {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  color: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.doc-identity__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.doc-identity__name {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
+/* --- Botões de ícone --- */
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  transition: background-color var(--dur-fast) var(--ease-standard),
+              color var(--dur-fast) var(--ease-standard),
+              transform var(--dur-fast) var(--ease-standard);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+.icon-btn:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+}
+
+.icon-btn:active {
+  transform: scale(0.92);
+  background: var(--color-accent-soft);
+}
+
+.icon-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.icon-btn.is-active {
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.icon-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.icon-btn--sm {
+  width: 32px;
+  height: 32px;
+}
+
+.icon-btn--sm svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* Toggle de tema: troca de ícone sol/lua */
+.icon-theme-moon { display: none; }
+[data-theme="dark"] .icon-theme-sun { display: none; }
+[data-theme="dark"] .icon-theme-moon { display: block; }
+
+/* Toggle de fullscreen */
+.icon-fs-exit { display: none; }
+body.is-fullscreen .icon-fs-enter { display: none; }
+body.is-fullscreen .icon-fs-exit { display: block; }
+
+/* --- Navegação de páginas --- */
+.page-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 3px;
+}
+
+.page-nav__field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.page-nav__input {
+  width: 38px;
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 5px 2px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  transition: border-color var(--dur-fast) var(--ease-standard);
+  -moz-appearance: textfield;
+}
+
+.page-nav__input::-webkit-outer-spin-button,
+.page-nav__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.page-nav__input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-focus);
+}
+
+.page-nav__sep { color: var(--color-text-tertiary); }
+.page-nav__total { font-weight: 500; color: var(--color-text-secondary); }
+
+/* --- Zoom --- */
+.zoom-control {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 3px;
+}
+
+.zoom-control__value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  padding: 0;
+}
+
+.zoom-control__input {
+  width: 52px;
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 2px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  transition: border-color var(--dur-fast) var(--ease-standard);
+}
+
+.zoom-control__input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-focus);
+}
+
+/* --------------------------------------------------------------------------
+   6. SEARCH PANEL
+   -------------------------------------------------------------------------- */
+.search-panel {
+  position: absolute;
+  top: var(--topbar-h);
+  right: var(--space-4);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--search-h);
+  padding: 0 var(--space-2) 0 var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-12px) scale(0.97);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: transform var(--dur-base) var(--ease-bounce),
+              opacity var(--dur-base) var(--ease-standard),
+              visibility var(--dur-base);
+}
+
+.search-panel.is-open {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.search-panel__icon {
+  display: flex;
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+.search-panel__icon svg { width: 100%; height: 100%; }
+
+.search-panel__input {
+  border: none;
+  background: transparent;
+  font-size: var(--font-size-sm);
+  width: 220px;
+  color: var(--color-text-primary);
+  padding: 6px 0;
+}
+
+.search-panel__input:focus { outline: none; }
+
+.search-panel__input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.search-panel__count {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+  min-width: 48px;
+  text-align: center;
+  background: var(--color-surface-alt);
+  border-radius: var(--radius-sm);
+  padding: 4px 6px;
+}
+
+/* --------------------------------------------------------------------------
+   7. APP BODY (Sidebar + Viewer)
+   -------------------------------------------------------------------------- */
+.app-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   8. SIDEBAR (Miniaturas)
+   -------------------------------------------------------------------------- */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width var(--dur-slow) var(--ease-standard),
+              min-width var(--dur-slow) var(--ease-standard),
+              opacity var(--dur-base) var(--ease-standard),
+              border-color var(--dur-base);
+}
+
+.sidebar.is-collapsed {
+  width: var(--sidebar-w-collapsed);
+  min-width: var(--sidebar-w-collapsed);
+  border-right-color: transparent;
+  opacity: 0;
+}
+
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.sidebar__count {
+  background: var(--color-surface-alt);
+  border-radius: var(--radius-full);
+  padding: 2px 8px;
+  font-weight: 600;
+}
+
+.sidebar__list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  scroll-behavior: smooth;
+}
+
+/* --- Item de miniatura --- */
+.thumb-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  border: 2px solid transparent;
+  transition: background var(--dur-fast) var(--ease-standard),
+              border-color var(--dur-fast) var(--ease-standard);
+  animation: fadeInUp var(--dur-slow) var(--ease-standard) backwards;
+}
+
+.thumb-item:hover {
+  background: var(--color-surface-alt);
+}
+
+.thumb-item.is-active {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.thumb-item__canvas-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background: var(--color-page-bg);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+  border: 1px solid var(--color-canvas-border);
+  position: relative;
+  min-height: 60px;
+}
+
+.thumb-item__canvas-wrap canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.thumb-item.is-active .thumb-item__canvas-wrap {
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+.thumb-item__skeleton {
+  width: 100%;
+  aspect-ratio: 0.72;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(100deg, var(--color-surface-alt) 30%, var(--color-border) 50%, var(--color-surface-alt) 70%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.thumb-item__label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+}
+
+.thumb-item.is-active .thumb-item__label {
+  color: var(--color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   9. SIDEBAR RESIZER
+   -------------------------------------------------------------------------- */
+.sidebar-resizer {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   10. VIEWER (Área principal de renderização)
+   -------------------------------------------------------------------------- */
+.viewer {
+  flex: 1;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: auto;
+  background: var(--color-bg);
+  scroll-behavior: auto;
+}
+
+.viewer:focus-visible {
+  outline: none;
+}
+
+.viewer__pages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-5) var(--space-4) 96px;
+  min-height: 100%;
+}
+
+/* --- Página individual --- */
+.pdf-page {
+  position: relative;
+  background: var(--color-page-bg);
+  box-shadow: 0 1px 3px var(--color-canvas-shadow), 0 8px 24px var(--color-canvas-shadow);
+  border-radius: var(--radius-sm);
+  transition: box-shadow var(--dur-base) var(--ease-standard);
+  flex-shrink: 0;
+}
+
+.pdf-page canvas {
+  display: block;
+  border-radius: var(--radius-sm);
+}
+
+.pdf-page__number-badge {
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  font-weight: 600;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* Placeholder enquanto a página não foi renderizada (virtualização) */
+.pdf-page__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-page-bg);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-tertiary);
+}
+
+.pdf-page__placeholder .loading-spinner {
+  width: 28px;
+  height: 28px;
+  border-width: 3px;
+}
+
+/* Camada de texto (para seleção e busca) */
+.pdf-page__text-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  line-height: 1;
+  opacity: 1;
+}
+
+.pdf-page__text-layer span {
+  position: absolute;
+  color: transparent;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+}
+
+.pdf-page__text-layer span::selection {
+  background: var(--color-accent-soft-strong);
+}
+
+/* Marcações de busca */
+.pdf-page__text-layer span.search-highlight {
+  background: var(--color-highlight);
+  border-radius: 2px;
+  opacity: 0.55;
+}
+
+.pdf-page__text-layer span.search-highlight.is-current {
+  background: var(--color-highlight-active);
+  opacity: 0.75;
+  box-shadow: 0 0 0 2px var(--color-highlight-active);
+}
+
+/* --------------------------------------------------------------------------
+   11. INDICADOR FLUTUANTE DE PÁGINA
+   -------------------------------------------------------------------------- */
+.page-indicator {
+  position: absolute;
+  bottom: var(--space-5);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: rgba(20, 22, 30, 0.82);
+  color: #fff;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-standard),
+              transform var(--dur-base) var(--ease-standard);
+  z-index: 30;
+  backdrop-filter: blur(6px);
+}
+
+.page-indicator.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   12. BOTÃO VOLTAR AO TOPO
+   -------------------------------------------------------------------------- */
+.scroll-top-btn {
+  position: absolute;
+  bottom: var(--space-5);
+  right: var(--space-5);
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(10px) scale(0.9);
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-standard),
+              transform var(--dur-base) var(--ease-bounce),
+              background var(--dur-fast);
+  z-index: 30;
+  border: 1px solid var(--color-border);
+}
+
+.scroll-top-btn.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.scroll-top-btn:hover {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.scroll-top-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* --------------------------------------------------------------------------
+   13. LOADING OVERLAY
+   -------------------------------------------------------------------------- */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--dur-slow) var(--ease-standard), visibility var(--dur-slow);
+}
+
+.loading-overlay.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-overlay__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.loading-spinner {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 4px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  animation: spin 0.8s linear infinite;
+}
+
+.loading-overlay__text {
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  margin: 0;
+}
+
+.loading-progress {
+  width: 220px;
+  height: 6px;
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.loading-progress__bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-hover));
+  border-radius: var(--radius-full);
+  transition: width var(--dur-base) var(--ease-standard);
+}
+
+/* --------------------------------------------------------------------------
+   14. TOAST NOTIFICATIONS
+   -------------------------------------------------------------------------- */
+.toast-container {
+  position: fixed;
+  bottom: var(--space-5);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  z-index: 200;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--color-text-primary);
+  color: var(--color-surface);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transform: translateY(12px);
+  animation: toastIn var(--dur-base) var(--ease-bounce) forwards;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .toast {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-strong);
+}
+
+.toast.is-leaving {
+  animation: toastOut var(--dur-fast) var(--ease-standard) forwards;
+}
+
+/* --------------------------------------------------------------------------
+   15. ANIMAÇÕES
+   -------------------------------------------------------------------------- */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(8px); }
+}
+
+@keyframes pulseHighlight {
+  0%, 100% { box-shadow: 0 0 0 2px var(--color-highlight-active); }
+  50% { box-shadow: 0 0 0 4px var(--color-highlight-active); }
+}
+
+.pdf-page__text-layer span.search-highlight.is-current {
+  animation: pulseHighlight 1.2s ease-in-out infinite;
+}
+
+/* --------------------------------------------------------------------------
+   16. ESTADOS DE FULLSCREEN
+   -------------------------------------------------------------------------- */
+body.is-fullscreen #app {
+  background: var(--color-bg);
+}
+
+/* --------------------------------------------------------------------------
+   17. RESPONSIVIDADE
+   -------------------------------------------------------------------------- */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-w: 200px;
+  }
+
+  .doc-identity__name {
+    max-width: 160px;
+  }
+}
+
+/* Telas pequenas / mobile */
+@media (max-width: 768px) {
+  .topbar {
+    padding: 0 var(--space-2);
+    gap: var(--space-1);
+  }
+
+  .doc-identity__name {
+    display: none;
+  }
+
+  .topbar__group--left {
+    flex: 0 0 auto;
+  }
+
+  .topbar__group--center {
+    gap: var(--space-1);
+  }
+
+  .topbar__group--right {
+    flex: 0 0 auto;
+    gap: 0;
+  }
+
+  .toolbar-divider {
+    display: none;
+  }
+
+  .zoom-control {
+    display: none;
+  }
+
+  .page-nav__input {
+    width: 32px;
+  }
+
+  /* Sidebar passa a ser um drawer sobreposto */
+  .sidebar {
+    position: fixed;
+    top: var(--topbar-h);
+    bottom: 0;
+    left: 0;
+    z-index: 60;
+    box-shadow: var(--shadow-lg);
+    width: 78vw;
+    min-width: 78vw;
+    max-width: 320px;
+  }
+
+  .sidebar.is-collapsed {
+    width: 78vw;
+    min-width: 78vw;
+    max-width: 320px;
+    transform: translateX(-100%);
+    opacity: 1;
+  }
+
+  .sidebar:not(.is-collapsed) {
+    transform: translateX(0);
+  }
+
+  .search-panel {
+    right: var(--space-2);
+    left: var(--space-2);
+  }
+
+  .search-panel__input {
+    width: 100%;
+  }
+
+  .viewer__pages {
+    padding: var(--space-4) var(--space-2) 96px;
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .doc-identity__icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .icon-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .page-nav__field {
+    padding: 0 4px;
+    font-size: var(--font-size-xs);
+  }
+
+  .scroll-top-btn {
+    bottom: var(--space-3);
+    right: var(--space-3);
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* Overlay escuro para fechar sidebar em mobile ao tocar fora */
+@media (max-width: 768px) {
+  .app-body.sidebar-open::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--color-overlay);
+    z-index: 50;
+    animation: fadeInUp var(--dur-base) var(--ease-standard);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   18. PRINT
+   -------------------------------------------------------------------------- */
+@media print {
+  .topbar, .sidebar, .search-panel, .page-indicator,
+  .scroll-top-btn, .loading-overlay, .toast-container, .sidebar-resizer {
+    display: none !important;
+  }
+
+  .viewer {
+    overflow: visible;
+  }
+
+  .viewer__pages {
+    padding: 0;
+    gap: 0;
+  }
+
+  .pdf-page {
+    box-shadow: none;
+    page-break-after: always;
+  }
+}
